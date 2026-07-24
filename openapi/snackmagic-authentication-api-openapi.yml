@@ -1,0 +1,298 @@
+openapi: 3.1.0
+info:
+  description: "### *Stadium’s API can only be used by customers and partners on the Business and Enterprise Packages. See [here](https://www.bystadium.com/pricing) for more details.\n\n# Introduction\n\nStadium's API lets you embed a global gift, rewards, and branded swag catalog on your own native application.\n\nYou can also embed a unique treat link to send Stadium Shop points for your users to redeem gifts, rewards and swag, on Stadium.\n\n- Pull in and display your unique Stadium Shop products.\n- Place orders against your Stadium Shop from your website or app, and pass on fulfillment to Stadium.\n- Send Stadium Shop points via our secure treat link for users to redeem gifts, rewards and branded swag to your branded Stadium Shop, on Stadium. This replicates our send points flow without having to generate an admin/organizer order from Stadium.\n\n# Getting started\n\nTo start using the API, you'll need to set up a shop against which you would be placing orders.\n\nTo set up a shop:\n\n1. Sign up for a **free** Stadium account at: https://www.bystadium.com/. See Login/Sign Up in the top right corner of the page.\n2. Create your **free** Stadium Shop signup for an account at **Stadium** and create as many shops as you desire. [Video demo link](https://youtu.be/VAMfQMHqVmY)\n3. Once you have set up the shop, edit your shop catalog on the Stadium Shop’s dashboard so that you curate and approve all SKUs you are making available from our master catalog. [Video demo link](https://youtu.be/DEY1N2bBYtw)\n4. Set up your funding source. Because there will be no checkout page to pay for orders on Stadium’s front-end website, API users must deposit Wallet funds which can be used as a pre-purchased balance to pay for orders every time a recipient redeems Stadium products on a third-party platform. [More details here](https://www.bystadium.com/wallet)\n5. Once you have created an account, set up your shop, finalized your catalog, and set up a funding source, reach out to our support at engineering@bystadium.com and we'll provide you with access credentials which can be used to generate tokens and make API requests.\n\n\n# Environments\n\nStadium's API has two environments:\n\n- **Production**\n  https://api.bystadium.com\n\n- **Sandbox**\n  https://api.preprod.bystadium.com\n\n\n# Sandbox\n\nYou can use the Sandbox environment to create test orders without being charged for them. Your sandbox account\nis entirely separate account from production, so you can do your testing without affecting your main account.\n\nTo setup a sandbox account, please email engineering@bystadium.com for basic credentials. Once you receive those\nto access the sandbox environment, you can create a test user account and Stadium Shop by signing up on\nhttps://preprod.bystadium.com/shops/all\n\nOnce done, reach out to our support at engineering@bystadium.com and we’ll help you get started with API keys.\n"
+  version: 2.0.0
+  title: Stadium Authentication API
+  termsOfService: https://www.bystadium.com/terms-of-use/
+  contact:
+    name: API Support
+    email: engineering@bystadium.com
+    url: https://www.bystadium.com
+  x-logo:
+    url: https://assets.auth0.bystadium.com/images/logos/color/stadium.svg
+    altText: Stadium logo
+servers:
+- url: https://api.bystadium.com/api/v2
+  description: Default server
+- url: https://api.preprod.bystadium.com/api/v2
+  description: Sandbox server
+tags:
+- name: Authentication
+  description: 'Stadium uses JWT (as Bearer token) for authentication. API provides 4 different methods to generate the token:
+
+
+    1. Client Credentials
+
+    2. Authorization Code (OAuth2)
+
+    3. Authorization Code using PKCE
+
+    4. Token using refresh token
+
+
+    The authentication method to be used depends on your use case - whether you want to place orders using a global
+
+    organizer account or user''s own Stadium Account and your implementation details.
+
+
+    For each method, once you generate a _token_, it needs to be set as the _Bearer_ token in the **Authorization** header.
+
+    The _token_ is valid for **24 hours**. The _token_ validity can be checked with our **Validate token** API endpoint.
+
+    Once expired, a new _token_ will need to be generated using the same API endpoint as used earlier.
+
+
+    ### Client Credentials
+
+
+    This should be used if you are an organizer and want to place an order or send points using a **global** organizer account.
+
+    You can directly use the **Get Token** API endpoint to fetch the _token_ that can then be used in other APIs for authorization.
+
+
+    ### Authorization Code (OAuth2)
+
+
+    This should be used if you want to place an order or send points on **behalf** of a Stadium user. This uses Oauth2 flow where you will need
+
+    need to make an **Authorize** request first. This will redirect the user to the Stadium login page and once they sign in, a *code* is
+
+    received on the given `redirect_url`. Using this _code_, the _token_ can be fetched using the **Get Token by Code** API providing both
+
+    `client_id` and `client_secret`. The `redirect_url` should be the same as given in the authorize call.
+
+
+    ### Authorization Code using PKCE
+
+
+    If you want to use the Authorization code method but cannot store the `client_secret` securely (like native application or SPA) you should use
+
+    this flow. In this you need to [generate a PKCE](https://developer.pingidentity.com/en/tools/pkce-code-generator.html) `code_challenge` and `code_verifier`
+
+    using the SHA256 method. The `code_challenge` needs to sent as an additional param to the **Authorize** request. Once the _code_ is received send the
+
+    `code_verifier` as the param (instead of `client_secret`) to the **Get Token by Code** API.
+
+
+    ### Token using refresh token
+
+
+    You can use this to issue a new access token using an existing access token and a refresh token.
+
+    '
+paths:
+  /oauth/token:
+    post:
+      tags:
+      - Authentication
+      summary: Get token
+      description: 'Get an access token that needs to be set as Bearer token for authorizing API.
+
+        '
+      operationId: getToken
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjRCZC1xRHZqM3RqODZ4TDV2RDVGaiJ9.eyJpc3MiOiJodHRwczovL2F1dGgucHJlcHJvZC5ieXN0YWRpdW0uY29tLyIsInN1YiI6ImtsZEM1ZVh3aUo2NFoyVUdLSFBzcHdBcWFkWnN3bE5aQGNsaWVudHMiLCJhdWQiOiJodHRwczovL2FwaS5ieXN0YWRpdW0uY29tLyIsImlhdCI6MTY5NzQ1NjQ1NiwiZXhwIjoxNjk3NTQyODU2LCJhenAiOiJrbGRDNWVYd2lKNjRaMlVHS0hQc3B3QXFhZFpzd2xOWiIsImd0eSI6ImNsaWVudC1jcmVkZW50aWFscyJ9.kuRhrHkd6Xu0rDhibvq_MllMLt0P4DUjTAKg4OcNFlLgZWsE-Mmo_3mMdbXh6IL_a5OLI8SvTexHVZmLXUBpdOGY0MPU-M0MHtt0QOlVp5wxyZJnQLbvyemnriSZxfSYqqcuofJQ3tp7tC1j9ej_-gbvfTcv_D3p8uKFxOmIWh1q3px6Zn8yW6CZEvTlHfFJXIEwtQJrof25pcIZjI-CKQZ_S4v0ch2ohPs1a3XLD95MCvrcC_isoj6BrmLxT8OysREKmpaicq3OMqTAxxRGV1vM_kir5DdlGlu7KtF79bG8e8wSJ8vtQckcyLRpeJmU_vWmA8iS5l-0GARhDJzrkw
+                  expires_at:
+                    type: timestamp
+                    example: 1697542856
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client_id:
+                  type: string
+                  description: Client ID
+                  example: kldC5eXwiJ64Z2UGKHPspwAqadZswlNZ
+                client_secret:
+                  type: string
+                  description: Client Secret
+                  example: Rz0yzz1DtEVOTxXj7qewacgz81WKcFJ7HI_N7yxjv78EuIji3OH8-x0sXdKZeBjC
+              required:
+              - client_id
+              - client_secret
+  /oauth/authorize:
+    get:
+      tags:
+      - Authentication
+      summary: Authorize
+      description: 'Redirects to the Stadium login page returning the authorization `code`
+
+        '
+      operationId: authorize
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: OieZoR-l4FXZ9HQhy0rwZJ-8GJgBUSt0v5uzCg2QTug
+                  locale:
+                    type: string
+                    example: en
+                  userState:
+                    type: string
+                    example: Authenticated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client_id:
+                  type: string
+                  description: Client ID
+                  example: kldC5eXwiJ64Z2UGKHPspwAqadZswlNZ
+                redirect_url:
+                  type: string
+                  description: Callback URL to which the _code_ needs to be send after user successfully signs in
+                  example: https://example.com/callback
+                code_challenge:
+                  type: string
+                  description: Required if you want to use Authorization flow using PKCE
+                  example: SS8ayGdeOwWeW9oi7veRvocGOKYfhZ-bHZ0AZ45IzSs
+              required:
+              - client_id
+              - redirect_url
+  /oauth/token_by_code:
+    post:
+      tags:
+      - Authentication
+      summary: Get token by code
+      description: 'Exchange the authorization _code_ for `access_token` and `refresh_token`
+
+        '
+      operationId: getTokenByCode
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjRCZC1xRHZqM3RqODZ4TDV2RDVGaiJ9.eyJpc3MiOiJodHRwczovL2F1dGgucHJlcHJvZC5ieXN0YWRpdW0uY29tLyIsInN1YiI6ImtsZEM1ZVh3aUo2NFoyVUdLSFBzcHdBcWFkWnN3bE5aQGNsaWVudHMiLCJhdWQiOiJodHRwczovL2FwaS5ieXN0YWRpdW0uY29tLyIsImlhdCI6MTY5NzQ1NjQ1NiwiZXhwIjoxNjk3NTQyODU2LCJhenAiOiJrbGRDNWVYd2lKNjRaMlVHS0hQc3B3QXFhZFpzd2xOWiIsImd0eSI6ImNsaWVudC1jcmVkZW50aWFscyJ9.kuRhrHkd6Xu0rDhibvq_MllMLt0P4DUjTAKg4OcNFlLgZWsE-Mmo_3mMdbXh6IL_a5OLI8SvTexHVZmLXUBpdOGY0MPU-M0MHtt0QOlVp5wxyZJnQLbvyemnriSZxfSYqqcuofJQ3tp7tC1j9ej_-gbvfTcv_D3p8uKFxOmIWh1q3px6Zn8yW6CZEvTlHfFJXIEwtQJrof25pcIZjI-CKQZ_S4v0ch2ohPs1a3XLD95MCvrcC_isoj6BrmLxT8OysREKmpaicq3OMqTAxxRGV1vM_kir5DdlGlu7KtF79bG8e8wSJ8vtQckcyLRpeJmU_vWmA8iS5l-0GARhDJzrkw
+                  refresh_token:
+                    type: string
+                    example: TnR5cCI6Iksfw34pXVCIsImtpIjRCZC1xRH
+                  expires_in:
+                    type: integer
+                    example: 360
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client_id:
+                  type: string
+                  description: Client ID
+                  example: kldC5eXwiJ64Z2UGKHPspwAqadZswlNZ
+                client_secret:
+                  type: string
+                  description: Client Secret. Required if not using PKCE flow.
+                  example: Rz0yzz1DtEVOTxXj7qewacgz81WKcFJ7HI_N7yxjv78EuIji3OH8-x0sXdKZeBjC
+                code:
+                  type: string
+                  description: Authorization `code` received as a response from the Authorize API
+                  example: OieZoR-l4FXZ9HQhy0rwZJ-8GJgBUSt0v5uzCg2QTug
+                redirect_url:
+                  type: string
+                  description: The same callback url that was used in the Authorize API for verification
+                  example: https://example.com/callback
+                code_verifier:
+                  type: string
+                  description: Required if you want to use Authorization flow using PKCE
+                  example: JVyO9RFzl4HBZ94d-b80T54cjs8n5utBKgUTbEegsifDHe-x-onQykGSwgvHCm5gtp5hB2F9wYUoSnIt4P0h0kPH6qU2Lp9nlXBzmht2NEVIhNe9dhbSPLDra0kDQtBi
+              required:
+              - client_id
+              - code
+              - redirect_url
+  /oauth/token_by_refresh_token:
+    post:
+      tags:
+      - Authentication
+      summary: Get token by refresh token
+      description: 'Exchange the `access_token` and `refresh_token` for new `access_token`
+
+        '
+      operationId: getTokenByRefreshToken
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0ODc5NzU0NTgsImlhdCI6MTQ4Nzk3MTg1OCwiaXNzIjoiYWNtZS5jb20iLCJzdWIiOiI4NThhNGIwMS02MmM4LTRjMmYtYmZhNy02ZDAxODgzM2JlYTciLCJhcHBsaWNhdGlvbklkIjoiM2MyMTllNTgtZWQwZS00YjE4LWFkNDgtZjRmOTI3OTNhZTMyIiwicm9sZXMiOlsiYWRtaW4iXX0.O29_m_NDa8Cj7kcpV7zw5BfFmVGsK1n3EolCj5u1M9hZ09EnkaOl5n68OLsIcpCrX0Ue58qsabag3MCNS6H4ldt6kMnH6k4bVg4TvIjoR8WE-yGcu_xDUObYKZYaHWiNeuDL1EuQQI_8HajQLND-c9juy5ILuz6Fhx8CLfHCziEHX_aQPt7jQ2IIasVzprKkgvWS07Hiv2Oskryx49wqCesl46b-30c6nfttHUDEQrVq9gaepca3Nhjj_cPtC400JgLCN9DOYIbtd69zvD8vDUOvVzMr2HGdWtKthqa35NF-3xMZKD8CShe8ZT74fNd9YZ
+                  refresh_token:
+                    type: string
+                    example: L7zYuKstXogqioA_P3Z4fiEuga0NCVRcDSc8cy_9
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: Access Token
+                  example: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjRCZC1xRHZqM3RqODZ4TDV2RDVGaiJ9.eyJpc3MiOiJodHRwczovL2F1dGgucHJlcHJvZC5ieXN0YWRpdW0uY29tLyIsInN1YiI6ImtsZEM1ZVh3aUo2NFoyVUdLSFBzcHdBcWFkWnN3bE5aQGNsaWVudHMiLCJhdWQiOiJodHRwczovL2FwaS5ieXN0YWRpdW0uY29tLyIsImlhdCI6MTY5NzQ1NjQ1NiwiZXhwIjoxNjk3NTQyODU2LCJhenAiOiJrbGRDNWVYd2lKNjRaMlVHS0hQc3B3QXFhZFpzd2xOWiIsImd0eSI6ImNsaWVudC1jcmVkZW50aWFscyJ9.kuRhrHkd6Xu0rDhibvq_MllMLt0P4DUjTAKg4OcNFlLgZWsE-Mmo_3mMdbXh6IL_a5OLI8SvTexHVZmLXUBpdOGY0MPU-M0MHtt0QOlVp5wxyZJnQLbvyemnriSZxfSYqqcuofJQ3tp7tC1j9ej_-gbvfTcv_D3p8uKFxOmIWh1q3px6Zn8yW6CZEvTlHfFJXIEwtQJrof25pcIZjI-CKQZ_S4v0ch2ohPs1a3XLD95MCvrcC_isoj6BrmLxT8OysREKmpaicq3OMqTAxxRGV1vM_kir5DdlGlu7KtF79bG8e8wSJ8vtQckcyLRpeJmU_vWmA8iS5l-0GARhDJzrkw
+                refresh_token:
+                  type: string
+                  description: Refresh Token
+                  example: GciOiJSUzI1NiIsInR5cCI6IkpXVCdfgr23D
+              required:
+              - token
+              - refresh_token
+  /oauth/validate:
+    post:
+      tags:
+      - Authentication
+      summary: Validate token
+      description: 'Validate whether the access token is valid and/or expired
+
+        '
+      operationId: validateToken
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  verified:
+                    type: boolean
+                    example: true
+                  expires_at:
+                    type: timestamp
+                    example: 1697542856
+      security:
+      - Token: []
+components:
+  securitySchemes:
+    Token:
+      type: http
+      in: header
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,324 @@
+openapi: 3.1.0
+info:
+  description: "### *Stadium’s API can only be used by customers and partners on the Business and Enterprise Packages. See [here](https://www.bystadium.com/pricing) for more details.\n\n# Introduction\n\nStadium's API lets you embed a global gift, rewards, and branded swag catalog on your own native application.\n\nYou can also embed a unique treat link to send Stadium Shop points for your users to redeem gifts, rewards and swag, on Stadium.\n\n- Pull in and display your unique Stadium Shop products.\n- Place orders against your Stadium Shop from your website or app, and pass on fulfillment to Stadium.\n- Send Stadium Shop points via our secure treat link for users to redeem gifts, rewards and branded swag to your branded Stadium Shop, on Stadium. This replicates our send points flow without having to generate an admin/organizer order from Stadium.\n\n# Getting started\n\nTo start using the API, you'll need to set up a shop against which you would be placing orders.\n\nTo set up a shop:\n\n1. Sign up for a **free** Stadium account at: https://www.bystadium.com/. See Login/Sign Up in the top right corner of the page.\n2. Create your **free** Stadium Shop signup for an account at **Stadium** and create as many shops as you desire. [Video demo link](https://youtu.be/VAMfQMHqVmY)\n3. Once you have set up the shop, edit your shop catalog on the Stadium Shop’s dashboard so that you curate and approve all SKUs you are making available from our master catalog. [Video demo link](https://youtu.be/DEY1N2bBYtw)\n4. Set up your funding source. Because there will be no checkout page to pay for orders on Stadium’s front-end website, API users must deposit Wallet funds which can be used as a pre-purchased balance to pay for orders every time a recipient redeems Stadium products on a third-party platform. [More details here](https://www.bystadium.com/wallet)\n5. Once you have created an account, set up your shop, finalized your catalog, and set up a funding source, reach out to our support at engineering@bystadium.com and we'll provide you with access credentials which can be used to generate tokens and make API requests.\n\n\n# Environments\n\nStadium's API has two environments:\n\n- **Production**\n  https://api.bystadium.com\n\n- **Sandbox**\n  https://api.preprod.bystadium.com\n\n\n# Sandbox\n\nYou can use the Sandbox environment to create test orders without being charged for them. Your sandbox account\nis entirely separate account from production, so you can do your testing without affecting your main account.\n\nTo setup a sandbox account, please email engineering@bystadium.com for basic credentials. Once you receive those\nto access the sandbox environment, you can create a test user account and Stadium Shop by signing up on\nhttps://preprod.bystadium.com/shops/all\n\nOnce done, reach out to our support at engineering@bystadium.com and we’ll help you get started with API keys.\n"
+  version: 2.0.0
+  title: Stadium Authentication Store management API
+  termsOfService: https://www.bystadium.com/terms-of-use/
+  contact:
+    name: API Support
+    email: engineering@bystadium.com
+    url: https://www.bystadium.com
+  x-logo:
+    url: https://assets.auth0.bystadium.com/images/logos/color/stadium.svg
+    altText: Stadium logo
+servers:
+- url: https://api.bystadium.com/api/v2
+  description: Default server
+- url: https://api.preprod.bystadium.com/api/v2
+  description: Sandbox server
+tags:
+- name: Store management
+  description: Store related API endpoints
+paths:
+  /stores:
+    get:
+      tags:
+      - Store management
+      summary: Get stores
+      description: 'Get all the stores for the current user.
+
+        '
+      operationId: getStores
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stores:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Store'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidToken'
+      security:
+      - Token: []
+  /stores/{store_number}/products:
+    get:
+      tags:
+      - Store management
+      summary: Get store products
+      description: 'Get all the products for the store
+
+        '
+      operationId: getStoreProducts
+      parameters:
+      - name: store_number
+        in: path
+        description: Number of store
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Page number
+        required: true
+        schema:
+          type: integer
+          format: int32
+          minimum: 1
+      - name: per_page
+        in: query
+        description: Number of products per page
+        required: true
+        schema:
+          type: integer
+          format: int32
+          minimum: 1
+      - name: sort_by
+        in: query
+        description: Example price:asc
+        schema:
+          type: string
+      - name: country_code
+        in: query
+        description: '2-digit ISO Country Code (eg: US, IN). Deafult is US'
+        schema:
+          type: string
+      - name: color
+        in: query
+        description: Filter products by color
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: Filter products by size
+        schema:
+          type: string
+      - name: only_inactive_products
+        in: query
+        description: Filter products that are inactive
+        schema:
+          type: boolean
+      - name: include_inactive_products
+        in: query
+        description: Filter products to include inactive as well
+        schema:
+          type: boolean
+      - name: with_out_of_stock
+        in: query
+        description: Filter products to include out of stock as well
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    $ref: '#/components/schemas/MetaData'
+                  products:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidToken'
+      security:
+      - Token: []
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          description: Product ID
+          allOf:
+          - $ref: '#/components/schemas/Id'
+        name:
+          type: string
+          description: Name of product
+        description:
+          type: string
+          description: Description of store
+        baseImage:
+          type: string
+          description: URL of product image
+        displayImage:
+          type: array
+          description: URLs of product's display images
+          items:
+            type: string
+        slug:
+          type: string
+          description: Slug of the product
+        outOfStock:
+          type: boolean
+          description: Product is out of stock or not
+        variants:
+          type: array
+          description: Variants of product
+          items:
+            $ref: '#/components/schemas/Variant'
+        taxons:
+          type: array
+          description: Taxons of product
+          items:
+            $ref: '#/components/schemas/Taxon'
+    Store:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of store
+          example: Build My Own Shop [BYO]
+        code:
+          type: string
+          description: Store code
+          example: build-my-own-shop-byo
+        active:
+          type: boolean
+          description: Store is active or not
+        created_at:
+          type: string
+          format: date-time
+          description: Store Creation date
+        url:
+          type: string
+          format: url
+          description: Store Url
+        banner:
+          type: string
+          format: url
+          description: Store Banner Url
+        number:
+          type: string
+          description: Store number to be used in other apis
+          example: S235588918
+        config:
+          description: Store Currency Details
+          allOf:
+          - $ref: '#/components/schemas/StoreConfig'
+        order_platform_fee:
+          description: Platform Fee that will be charged on each order for this store
+          allOf:
+          - $ref: '#/components/schemas/PlatformFee'
+    Id:
+      type: integer
+      format: int64
+      readOnly: true
+    Variant:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id of product variant to be used to create order
+          example: 0/0/0
+        sku:
+          type: string
+        externalSource:
+          type: string
+          example: SnackMagic
+        type:
+          type: string
+          example: Spree::Product
+          description: Type of product variant to be used to create order
+        price:
+          type: float
+          description: Price of product variant to be used to create order
+        outOfStock:
+          type: boolean
+        optionTypes:
+          type: array
+          description: Variant Type Definitions
+          items:
+            $ref: '#/components/schemas/OptionType'
+    PlatformFee:
+      type: object
+      properties:
+        fee:
+          type: number
+          format: float
+        type:
+          type: string
+          example: percent
+    InvalidToken:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error raised while trying to authorize the request
+          example: Invalid token
+    Taxon:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        taxonomyId:
+          type: string
+        taxonomyName:
+          type: string
+    StoreConfig:
+      type: object
+      properties:
+        currency_code:
+          type: string
+          example: STC
+        currency_name:
+          type: string
+          example: Points
+        currency_prefix:
+          type: string
+        currency_suffix:
+          type: string
+          example: Pts
+    MetaData:
+      type: object
+      properties:
+        page:
+          description: Current page number
+          type: integer
+          format: int32
+        per_page:
+          description: Number of products on current page
+          type: integer
+          format: int32
+        total:
+          description: Total number of products
+          type: integer
+          format: int32
+    OptionType:
+      type: object
+      properties:
+        key:
+          type: string
+          example: color
+        name:
+          type: string
+          example: Color
+        presentation:
+          type: string
+          example: Blue
+        value:
+          type: string
+          example: '#281E5D'
+  securitySchemes:
+    Token:
+      type: http
+      in: header
+      scheme: bearer
+      bearerFormat: JWT

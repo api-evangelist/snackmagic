@@ -1,0 +1,98 @@
+openapi: 3.1.0
+info:
+  description: "### *Stadium’s API can only be used by customers and partners on the Business and Enterprise Packages. See [here](https://www.bystadium.com/pricing) for more details.\n\n# Introduction\n\nStadium's API lets you embed a global gift, rewards, and branded swag catalog on your own native application.\n\nYou can also embed a unique treat link to send Stadium Shop points for your users to redeem gifts, rewards and swag, on Stadium.\n\n- Pull in and display your unique Stadium Shop products.\n- Place orders against your Stadium Shop from your website or app, and pass on fulfillment to Stadium.\n- Send Stadium Shop points via our secure treat link for users to redeem gifts, rewards and branded swag to your branded Stadium Shop, on Stadium. This replicates our send points flow without having to generate an admin/organizer order from Stadium.\n\n# Getting started\n\nTo start using the API, you'll need to set up a shop against which you would be placing orders.\n\nTo set up a shop:\n\n1. Sign up for a **free** Stadium account at: https://www.bystadium.com/. See Login/Sign Up in the top right corner of the page.\n2. Create your **free** Stadium Shop signup for an account at **Stadium** and create as many shops as you desire. [Video demo link](https://youtu.be/VAMfQMHqVmY)\n3. Once you have set up the shop, edit your shop catalog on the Stadium Shop’s dashboard so that you curate and approve all SKUs you are making available from our master catalog. [Video demo link](https://youtu.be/DEY1N2bBYtw)\n4. Set up your funding source. Because there will be no checkout page to pay for orders on Stadium’s front-end website, API users must deposit Wallet funds which can be used as a pre-purchased balance to pay for orders every time a recipient redeems Stadium products on a third-party platform. [More details here](https://www.bystadium.com/wallet)\n5. Once you have created an account, set up your shop, finalized your catalog, and set up a funding source, reach out to our support at engineering@bystadium.com and we'll provide you with access credentials which can be used to generate tokens and make API requests.\n\n\n# Environments\n\nStadium's API has two environments:\n\n- **Production**\n  https://api.bystadium.com\n\n- **Sandbox**\n  https://api.preprod.bystadium.com\n\n\n# Sandbox\n\nYou can use the Sandbox environment to create test orders without being charged for them. Your sandbox account\nis entirely separate account from production, so you can do your testing without affecting your main account.\n\nTo setup a sandbox account, please email engineering@bystadium.com for basic credentials. Once you receive those\nto access the sandbox environment, you can create a test user account and Stadium Shop by signing up on\nhttps://preprod.bystadium.com/shops/all\n\nOnce done, reach out to our support at engineering@bystadium.com and we’ll help you get started with API keys.\n"
+  version: 2.0.0
+  title: Stadium Authentication User management API
+  termsOfService: https://www.bystadium.com/terms-of-use/
+  contact:
+    name: API Support
+    email: engineering@bystadium.com
+    url: https://www.bystadium.com
+  x-logo:
+    url: https://assets.auth0.bystadium.com/images/logos/color/stadium.svg
+    altText: Stadium logo
+servers:
+- url: https://api.bystadium.com/api/v2
+  description: Default server
+- url: https://api.preprod.bystadium.com/api/v2
+  description: Sandbox server
+tags:
+- name: User management
+  description: User related API endpoints
+paths:
+  /users/me:
+    get:
+      tags:
+      - User management
+      summary: Get user profile
+      description: 'Get the user profile including wallet balance.
+
+        '
+      operationId: getUserProfile
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidToken'
+      security:
+      - Token: []
+components:
+  schemas:
+    InvalidToken:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error raised while trying to authorize the request
+          example: Invalid token
+    WalletCurrencyDetail:
+      type: object
+      properties:
+        code:
+          type: string
+          example: USD
+        name:
+          type: string
+          example: US Dollar
+        symbol:
+          type: string
+          example: $
+    User:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        stadium_points_balance:
+          type: integer
+          format: int64
+          description: Your reward point balance
+        wallet_balance:
+          type: integer
+          format: int64
+          description: Your stadium money wallet balance
+        wallet_currency:
+          $ref: '#/components/schemas/WalletCurrencyDetail'
+        billing_country:
+          type: string
+          description: ISO code of the billing country
+        billing_zipcode:
+          type: string
+          description: Billing Zip code
+  securitySchemes:
+    Token:
+      type: http
+      in: header
+      scheme: bearer
+      bearerFormat: JWT
