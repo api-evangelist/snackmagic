@@ -1,0 +1,16 @@
+generated: '2026-07-21'
+method: searched
+probe: true
+url: https://trust.bystadium.com
+platform: Vanta Trust Center
+certifications: []
+note: >-
+  SnackMagic / Stadium publishes a Vanta-powered Trust Center at https://trust.bystadium.com
+  (headed "Stadium Trust Center", with a Compliance section). The specific frameworks are
+  rendered client-side by Vanta and were not machine-readable at capture time, so no
+  individual certification (SOC 2 / ISO 27001 / etc.) is asserted here — the Trust Center's
+  existence is verified but named certs are not. Re-run to enrich certifications[] if the
+  Vanta portal exposes them.
+evidence:
+- source: https://trust.bystadium.com/
+  keywords: [trust center, compliance, vanta]

@@ -1,0 +1,20 @@
+generated: '2026-07-21'
+method: searched
+source: openapi/snackmagic-stadium-openapi.yml
+docs: https://api.bystadium.com/api/v2/docs
+sandbox:
+  base_url: https://api.preprod.bystadium.com/api/v2
+  label: Sandbox server (preprod)
+  described_in: OpenAPI servers[] ("Sandbox server")
+production_base_url: https://api.bystadium.com/api/v2
+test_vs_live:
+  note: >-
+    Stadium exposes a separate pre-production (preprod) host as the sandbox environment.
+    OAuth tokens for preprod are issued by auth.preprod.bystadium.com (seen in the example
+    JWT issuer). Set up a shop and deposit Wallet funds to place test orders.
+test_credentials:
+  published: false
+  note: >-
+    No fixed magic test values / test cards are published in the docs. The sandbox uses
+    the same OAuth + shop + Wallet model as production against the preprod host; example
+    client_id/client_secret in the spec are illustrative only, not working credentials.

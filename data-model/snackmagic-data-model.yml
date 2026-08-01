@@ -1,0 +1,74 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/snackmagic-stadium-openapi.yml
+entities:
+- name: User
+  description: The authenticated Stadium account, with points and wallet balances.
+  key_fields: [first_name, last_name, email, stadium_points_balance, wallet_balance, wallet_currency, billing_country]
+- name: Store
+  description: A Stadium Shop against which orders are placed.
+  key_fields: [store_number, config]
+- name: Product
+  description: A catalog item (with variants) available in a store.
+  key_fields: [id, name, sku, type, price, outOfStock, optionTypes, taxons]
+- name: Variant
+  description: A purchasable variant of a product (id form like 10/1/9).
+  key_fields: [id, sku, type, price, optionTypes]
+- name: Order
+  description: An order placed against a store, paid from Wallet or global points.
+  key_fields: [number, total, platform_fee, estimated_taxes, products]
+- name: OrderDetails
+  description: Detailed view of a placed order including shipment status.
+  key_fields: [number, total, shipment_status, completed_at, products]
+- name: OrderShipmentDetails
+  description: Shipment/tracking detail for an order.
+  key_fields: [order_shipment_status, shipment_details]
+- name: SendPointResponse
+  description: Result of sending Stadium Shop points via a treat link.
+  key_fields: [number, invitation_link, payment_state, used_wallet_money, outstanding_balance]
+- name: AutomationOrder
+  description: A webhook-automation order keyed by an identifier and api_key.
+  key_fields: [identifier, data]
+relationships:
+- from: Store
+  type: has_many
+  to: Product
+  via: getStoreProducts (store_number)
+- from: Order
+  type: has_many
+  to: OrderProduct
+  via: products
+- from: OrderDetails
+  type: has_many
+  to: OrderProduct
+  via: products
+- from: OrderShipmentDetails
+  type: has_many
+  to: ShippingDetail
+  via: shipment_details
+- from: ShippingDetail
+  type: has_many
+  to: ShippingProductDetail
+  via: product_details
+- from: Product
+  type: has_many
+  to: Variant
+  via: variants
+- from: Product
+  type: has_many
+  to: OptionType
+  via: optionTypes
+- from: User
+  type: has_one
+  to: WalletCurrencyDetail
+  via: wallet_currency
+- from: AutomationOrder
+  type: has_many
+  to: createAutomationOrderDetail
+  via: data
+id_notes:
+  order_number_example: R211027588 (R-prefixed)
+  send_points_order_example: R757013334
+  store_number_example: S235588918 (S-prefixed)
+  variant_id_form: "slash-delimited e.g. 10/1/9"
+  automation_identifier_example: ryfMiGzMp8ZTisWYbZUhjkVL

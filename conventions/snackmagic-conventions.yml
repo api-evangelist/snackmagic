@@ -1,0 +1,54 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/snackmagic-stadium-openapi.yml
+docs: https://api.bystadium.com/api/v2/docs
+summary: >-
+  Cross-cutting request/response semantics for the Stadium API (SnackMagic is a Stadium
+  brand). Derived from the OpenAPI 3.1 contract and the docs prose. The API is a JSON
+  REST API for embedding a global gift/rewards/swag catalog and placing orders funded by
+  a pre-purchased Wallet balance.
+authentication:
+  style: bearer JWT (OAuth2-issued) for most endpoints; api_key header for automations
+  see: authentication/snackmagic-authentication.yml
+base_url: https://api.bystadium.com/api/v2
+sandbox_base_url: https://api.preprod.bystadium.com/api/v2
+media_type: application/json
+versioning:
+  scheme: uri-path
+  current: v2
+  location: path segment /api/v2
+pagination:
+  style: page-number (offset)
+  request_params:
+  - page        # page number
+  - per_page    # products per page
+  response_fields:
+  - page        # current page number
+  - per_page    # products on current page
+  applies_to:
+  - openapi/snackmagic-stadium-openapi.yml#getStoreProducts
+idempotency:
+  supported: false
+  note: >-
+    No Idempotency-Key header or idempotency contract is documented in the OpenAPI or
+    docs. Order creation is a two-step create -> checkout flow rather than an
+    idempotent single call.
+request_tracing:
+  request_id_header: none documented
+rate_limiting:
+  signaled: false
+  note: No X-RateLimit / Retry-After headers documented in the spec.
+error_envelope:
+  note: >-
+    See errors/snackmagic-problem-types.yml. Auth errors use an error string; validation
+    errors use a JSON-API-style errors array of source.pointer + detail objects. Not RFC 9457.
+funding_model:
+  note: >-
+    API orders are paid from a pre-purchased Wallet balance (use_wallet_money) or global
+    Stadium Points (use_global_point) rather than a checkout page. Funds must be deposited
+    before placing orders. See https://www.bystadium.com/wallet.
+cross_links:
+  errors: errors/snackmagic-problem-types.yml
+  authentication: authentication/snackmagic-authentication.yml
+  lifecycle: lifecycle/snackmagic-lifecycle.yml
+  data_model: data-model/snackmagic-data-model.yml

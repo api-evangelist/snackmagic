@@ -1,0 +1,22 @@
+{
+  "provider": "snackmagic",
+  "sources": [
+    "snackmagic-authentication-api-openapi.yml",
+    "snackmagic-automation-management-api-openapi.yml",
+    "snackmagic-order-management-api-openapi.yml",
+    "snackmagic-store-management-api-openapi.yml",
+    "snackmagic-user-management-api-openapi.yml"
+  ],
+  "outputs": [
+    "snackmagic-authentication-api-openapi.yml",
+    "snackmagic-automation-management-api-openapi.yml",
+    "snackmagic-order-management-api-openapi.yml",
+    "snackmagic-store-management-api-openapi.yml",
+    "snackmagic-user-management-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

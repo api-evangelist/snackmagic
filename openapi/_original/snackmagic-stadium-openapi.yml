@@ -1,0 +1,1362 @@
+openapi: 3.1.0
+servers:
+  - url: https://api.bystadium.com/api/v2
+    description: Default server
+  - url: https://api.preprod.bystadium.com/api/v2
+    description: Sandbox server
+info:
+  description: |
+    ### *Stadium’s API can only be used by customers and partners on the Business and Enterprise Packages. See [here](https://www.bystadium.com/pricing) for more details.
+
+    # Introduction
+
+    Stadium's API lets you embed a global gift, rewards, and branded swag catalog on your own native application.
+
+    You can also embed a unique treat link to send Stadium Shop points for your users to redeem gifts, rewards and swag, on Stadium.
+
+    - Pull in and display your unique Stadium Shop products.
+    - Place orders against your Stadium Shop from your website or app, and pass on fulfillment to Stadium.
+    - Send Stadium Shop points via our secure treat link for users to redeem gifts, rewards and branded swag to your branded Stadium Shop, on Stadium. This replicates our send points flow without having to generate an admin/organizer order from Stadium.
+
+    # Getting started
+
+    To start using the API, you'll need to set up a shop against which you would be placing orders.
+
+    To set up a shop:
+
+    1. Sign up for a **free** Stadium account at: https://www.bystadium.com/. See Login/Sign Up in the top right corner of the page.
+    2. Create your **free** Stadium Shop signup for an account at **Stadium** and create as many shops as you desire. [Video demo link](https://youtu.be/VAMfQMHqVmY)
+    3. Once you have set up the shop, edit your shop catalog on the Stadium Shop’s dashboard so that you curate and approve all SKUs you are making available from our master catalog. [Video demo link](https://youtu.be/DEY1N2bBYtw)
+    4. Set up your funding source. Because there will be no checkout page to pay for orders on Stadium’s front-end website, API users must deposit Wallet funds which can be used as a pre-purchased balance to pay for orders every time a recipient redeems Stadium products on a third-party platform. [More details here](https://www.bystadium.com/wallet)
+    5. Once you have created an account, set up your shop, finalized your catalog, and set up a funding source, reach out to our support at engineering@bystadium.com and we'll provide you with access credentials which can be used to generate tokens and make API requests.
+
+
+    # Environments
+
+    Stadium's API has two environments:
+
+    - **Production**
+      https://api.bystadium.com
+
+    - **Sandbox**
+      https://api.preprod.bystadium.com
+
+
+    # Sandbox
+
+    You can use the Sandbox environment to create test orders without being charged for them. Your sandbox account
+    is entirely separate account from production, so you can do your testing without affecting your main account.
+
+    To setup a sandbox account, please email engineering@bystadium.com for basic credentials. Once you receive those
+    to access the sandbox environment, you can create a test user account and Stadium Shop by signing up on
+    https://preprod.bystadium.com/shops/all
+
+    Once done, reach out to our support at engineering@bystadium.com and we’ll help you get started with API keys.
+  version: 2.0.0
+  title: Stadium API
+  termsOfService: 'https://www.bystadium.com/terms-of-use/'
+  contact:
+    name: API Support
+    email: engineering@bystadium.com
+    url: https://www.bystadium.com
+  x-logo:
+    url: 'https://assets.auth0.bystadium.com/images/logos/color/stadium.svg'
+    altText: Stadium logo
+tags:
+  - name: Authentication
+    description: |
+      Stadium uses JWT (as Bearer token) for authentication. API provides 4 different methods to generate the token:
+
+      1. Client Credentials
+      2. Authorization Code (OAuth2)
+      3. Authorization Code using PKCE
+      4. Token using refresh token
+
+      The authentication method to be used depends on your use case - whether you want to place orders using a global
+      organizer account or user's own Stadium Account and your implementation details.
+
+      For each method, once you generate a _token_, it needs to be set as the _Bearer_ token in the **Authorization** header.
+      The _token_ is valid for **24 hours**. The _token_ validity can be checked with our **Validate token** API endpoint.
+      Once expired, a new _token_ will need to be generated using the same API endpoint as used earlier.
+
+      ### Client Credentials
+
+      This should be used if you are an organizer and want to place an order or send points using a **global** organizer account.
+      You can directly use the **Get Token** API endpoint to fetch the _token_ that can then be used in other APIs for authorization.
+
+      ### Authorization Code (OAuth2)
+
+      This should be used if you want to place an order or send points on **behalf** of a Stadium user. This uses Oauth2 flow where you will need
+      need to make an **Authorize** request first. This will redirect the user to the Stadium login page and once they sign in, a *code* is
+      received on the given `redirect_url`. Using this _code_, the _token_ can be fetched using the **Get Token by Code** API providing both
+      `client_id` and `client_secret`. The `redirect_url` should be the same as given in the authorize call.
+
+      ### Authorization Code using PKCE
+
+      If you want to use the Authorization code method but cannot store the `client_secret` securely (like native application or SPA) you should use
+      this flow. In this you need to [generate a PKCE](https://developer.pingidentity.com/en/tools/pkce-code-generator.html) `code_challenge` and `code_verifier`
+      using the SHA256 method. The `code_challenge` needs to sent as an additional param to the **Authorize** request. Once the _code_ is received send the
+      `code_verifier` as the param (instead of `client_secret`) to the **Get Token by Code** API.
+
+      ### Token using refresh token
+
+      You can use this to issue a new access token using an existing access token and a refresh token.
+
+  - name: User management
+    description: User related API endpoints
+  - name: Store management
+    description: Store related API endpoints
+  - name: Order management
+    description: Order related API endpoints
+  - name: Automation management
+    description: Automation related API endpoints
+paths:
+  /oauth/token:
+    post:
+      tags:
+        - Authentication
+      summary: Get token
+      description: |
+        Get an access token that needs to be set as Bearer token for authorizing API.
+      operationId: getToken
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjRCZC1xRHZqM3RqODZ4TDV2RDVGaiJ9.eyJpc3MiOiJodHRwczovL2F1dGgucHJlcHJvZC5ieXN0YWRpdW0uY29tLyIsInN1YiI6ImtsZEM1ZVh3aUo2NFoyVUdLSFBzcHdBcWFkWnN3bE5aQGNsaWVudHMiLCJhdWQiOiJodHRwczovL2FwaS5ieXN0YWRpdW0uY29tLyIsImlhdCI6MTY5NzQ1NjQ1NiwiZXhwIjoxNjk3NTQyODU2LCJhenAiOiJrbGRDNWVYd2lKNjRaMlVHS0hQc3B3QXFhZFpzd2xOWiIsImd0eSI6ImNsaWVudC1jcmVkZW50aWFscyJ9.kuRhrHkd6Xu0rDhibvq_MllMLt0P4DUjTAKg4OcNFlLgZWsE-Mmo_3mMdbXh6IL_a5OLI8SvTexHVZmLXUBpdOGY0MPU-M0MHtt0QOlVp5wxyZJnQLbvyemnriSZxfSYqqcuofJQ3tp7tC1j9ej_-gbvfTcv_D3p8uKFxOmIWh1q3px6Zn8yW6CZEvTlHfFJXIEwtQJrof25pcIZjI-CKQZ_S4v0ch2ohPs1a3XLD95MCvrcC_isoj6BrmLxT8OysREKmpaicq3OMqTAxxRGV1vM_kir5DdlGlu7KtF79bG8e8wSJ8vtQckcyLRpeJmU_vWmA8iS5l-0GARhDJzrkw'
+                  expires_at:
+                    type: timestamp
+                    example: 1697542856
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: 'object'
+              properties:
+                client_id:
+                  type: string
+                  description: 'Client ID'
+                  example: 'kldC5eXwiJ64Z2UGKHPspwAqadZswlNZ'
+                client_secret:
+                  type: string
+                  description: 'Client Secret'
+                  example: 'Rz0yzz1DtEVOTxXj7qewacgz81WKcFJ7HI_N7yxjv78EuIji3OH8-x0sXdKZeBjC'
+              required:
+                - client_id
+                - client_secret
+  /oauth/authorize:
+    get:
+      tags:
+        - Authentication
+      summary: Authorize
+      description: |
+        Redirects to the Stadium login page returning the authorization `code`
+      operationId: authorize
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: OieZoR-l4FXZ9HQhy0rwZJ-8GJgBUSt0v5uzCg2QTug
+                  locale:
+                    type: string
+                    example: en
+                  userState:
+                    type: string
+                    example: Authenticated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client_id:
+                  type: string
+                  description: Client ID
+                  example: kldC5eXwiJ64Z2UGKHPspwAqadZswlNZ
+                redirect_url:
+                  type: string
+                  description: Callback URL to which the _code_ needs to be send after user successfully signs in
+                  example: https://example.com/callback
+                code_challenge:
+                  type: string
+                  description: Required if you want to use Authorization flow using PKCE
+                  example: SS8ayGdeOwWeW9oi7veRvocGOKYfhZ-bHZ0AZ45IzSs
+              required:
+                - client_id
+                - redirect_url
+  /oauth/token_by_code:
+    post:
+      tags:
+        - Authentication
+      summary: Get token by code
+      description: |
+        Exchange the authorization _code_ for `access_token` and `refresh_token`
+      operationId: getTokenByCode
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjRCZC1xRHZqM3RqODZ4TDV2RDVGaiJ9.eyJpc3MiOiJodHRwczovL2F1dGgucHJlcHJvZC5ieXN0YWRpdW0uY29tLyIsInN1YiI6ImtsZEM1ZVh3aUo2NFoyVUdLSFBzcHdBcWFkWnN3bE5aQGNsaWVudHMiLCJhdWQiOiJodHRwczovL2FwaS5ieXN0YWRpdW0uY29tLyIsImlhdCI6MTY5NzQ1NjQ1NiwiZXhwIjoxNjk3NTQyODU2LCJhenAiOiJrbGRDNWVYd2lKNjRaMlVHS0hQc3B3QXFhZFpzd2xOWiIsImd0eSI6ImNsaWVudC1jcmVkZW50aWFscyJ9.kuRhrHkd6Xu0rDhibvq_MllMLt0P4DUjTAKg4OcNFlLgZWsE-Mmo_3mMdbXh6IL_a5OLI8SvTexHVZmLXUBpdOGY0MPU-M0MHtt0QOlVp5wxyZJnQLbvyemnriSZxfSYqqcuofJQ3tp7tC1j9ej_-gbvfTcv_D3p8uKFxOmIWh1q3px6Zn8yW6CZEvTlHfFJXIEwtQJrof25pcIZjI-CKQZ_S4v0ch2ohPs1a3XLD95MCvrcC_isoj6BrmLxT8OysREKmpaicq3OMqTAxxRGV1vM_kir5DdlGlu7KtF79bG8e8wSJ8vtQckcyLRpeJmU_vWmA8iS5l-0GARhDJzrkw
+                  refresh_token:
+                    type: string
+                    example: TnR5cCI6Iksfw34pXVCIsImtpIjRCZC1xRH
+                  expires_in:
+                    type: integer
+                    example: 360
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: 'object'
+              properties:
+                client_id:
+                  type: string
+                  description: Client ID
+                  example: kldC5eXwiJ64Z2UGKHPspwAqadZswlNZ
+                client_secret:
+                  type: string
+                  description: Client Secret. Required if not using PKCE flow.
+                  example: Rz0yzz1DtEVOTxXj7qewacgz81WKcFJ7HI_N7yxjv78EuIji3OH8-x0sXdKZeBjC
+                code:
+                  type: string
+                  description: Authorization `code` received as a response from the Authorize API
+                  example: OieZoR-l4FXZ9HQhy0rwZJ-8GJgBUSt0v5uzCg2QTug
+                redirect_url:
+                  type: string
+                  description: The same callback url that was used in the Authorize API for verification
+                  example: https://example.com/callback
+                code_verifier:
+                  type: string
+                  description: Required if you want to use Authorization flow using PKCE
+                  example: JVyO9RFzl4HBZ94d-b80T54cjs8n5utBKgUTbEegsifDHe-x-onQykGSwgvHCm5gtp5hB2F9wYUoSnIt4P0h0kPH6qU2Lp9nlXBzmht2NEVIhNe9dhbSPLDra0kDQtBi
+              required:
+                - client_id
+                - code
+                - redirect_url
+  /oauth/token_by_refresh_token:
+    post:
+      tags:
+        - Authentication
+      summary: Get token by refresh token
+      description: |
+        Exchange the `access_token` and `refresh_token` for new `access_token`
+      operationId: getTokenByRefreshToken
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0ODc5NzU0NTgsImlhdCI6MTQ4Nzk3MTg1OCwiaXNzIjoiYWNtZS5jb20iLCJzdWIiOiI4NThhNGIwMS02MmM4LTRjMmYtYmZhNy02ZDAxODgzM2JlYTciLCJhcHBsaWNhdGlvbklkIjoiM2MyMTllNTgtZWQwZS00YjE4LWFkNDgtZjRmOTI3OTNhZTMyIiwicm9sZXMiOlsiYWRtaW4iXX0.O29_m_NDa8Cj7kcpV7zw5BfFmVGsK1n3EolCj5u1M9hZ09EnkaOl5n68OLsIcpCrX0Ue58qsabag3MCNS6H4ldt6kMnH6k4bVg4TvIjoR8WE-yGcu_xDUObYKZYaHWiNeuDL1EuQQI_8HajQLND-c9juy5ILuz6Fhx8CLfHCziEHX_aQPt7jQ2IIasVzprKkgvWS07Hiv2Oskryx49wqCesl46b-30c6nfttHUDEQrVq9gaepca3Nhjj_cPtC400JgLCN9DOYIbtd69zvD8vDUOvVzMr2HGdWtKthqa35NF-3xMZKD8CShe8ZT74fNd9YZ
+                  refresh_token:
+                    type: string
+                    example: L7zYuKstXogqioA_P3Z4fiEuga0NCVRcDSc8cy_9
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: 'object'
+              properties:
+                token:
+                  type: string
+                  description: Access Token
+                  example: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjRCZC1xRHZqM3RqODZ4TDV2RDVGaiJ9.eyJpc3MiOiJodHRwczovL2F1dGgucHJlcHJvZC5ieXN0YWRpdW0uY29tLyIsInN1YiI6ImtsZEM1ZVh3aUo2NFoyVUdLSFBzcHdBcWFkWnN3bE5aQGNsaWVudHMiLCJhdWQiOiJodHRwczovL2FwaS5ieXN0YWRpdW0uY29tLyIsImlhdCI6MTY5NzQ1NjQ1NiwiZXhwIjoxNjk3NTQyODU2LCJhenAiOiJrbGRDNWVYd2lKNjRaMlVHS0hQc3B3QXFhZFpzd2xOWiIsImd0eSI6ImNsaWVudC1jcmVkZW50aWFscyJ9.kuRhrHkd6Xu0rDhibvq_MllMLt0P4DUjTAKg4OcNFlLgZWsE-Mmo_3mMdbXh6IL_a5OLI8SvTexHVZmLXUBpdOGY0MPU-M0MHtt0QOlVp5wxyZJnQLbvyemnriSZxfSYqqcuofJQ3tp7tC1j9ej_-gbvfTcv_D3p8uKFxOmIWh1q3px6Zn8yW6CZEvTlHfFJXIEwtQJrof25pcIZjI-CKQZ_S4v0ch2ohPs1a3XLD95MCvrcC_isoj6BrmLxT8OysREKmpaicq3OMqTAxxRGV1vM_kir5DdlGlu7KtF79bG8e8wSJ8vtQckcyLRpeJmU_vWmA8iS5l-0GARhDJzrkw
+                refresh_token:
+                  type: string
+                  description: Refresh Token
+                  example: GciOiJSUzI1NiIsInR5cCI6IkpXVCdfgr23D
+              required:
+                - token
+                - refresh_token
+  /oauth/validate:
+    post:
+      tags:
+        - Authentication
+      summary: Validate token
+      description: |
+        Validate whether the access token is valid and/or expired
+      operationId: validateToken
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  verified:
+                    type: boolean
+                    example: true
+                  expires_at:
+                    type: timestamp
+                    example: 1697542856
+      security:
+      - Token: []
+  /users/me:
+    get:
+      tags:
+        - User management
+      summary: Get user profile
+      description: |
+        Get the user profile including wallet balance.
+      operationId: getUserProfile
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidToken'
+      security:
+      - Token: []
+  /stores:
+    get:
+      tags:
+        - Store management
+      summary: Get stores
+      description: |
+        Get all the stores for the current user.
+      operationId: getStores
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stores:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Store'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidToken'
+      security:
+      - Token: []
+  '/stores/{store_number}/products':
+    get:
+      tags:
+        - Store management
+      summary: Get store products
+      description: |
+        Get all the products for the store
+      operationId: getStoreProducts
+      parameters:
+        - name: store_number
+          in: path
+          description: Number of store
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+        - name: per_page
+          in: query
+          description: Number of products per page
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+        - name: sort_by
+          in: query
+          description: Example price:asc
+          schema:
+            type: string
+        - name: country_code
+          in: query
+          description: '2-digit ISO Country Code (eg: US, IN). Deafult is US'
+          schema:
+            type: string
+        - name: color
+          in: query
+          description: 'Filter products by color'
+          schema:
+            type: string
+        - name: size
+          in: query
+          description: 'Filter products by size'
+          schema:
+            type: string
+        - name: only_inactive_products
+          in: query
+          description: 'Filter products that are inactive'
+          schema:
+            type: boolean
+        - name: include_inactive_products
+          in: query
+          description: 'Filter products to include inactive as well'
+          schema:
+            type: boolean
+        - name: with_out_of_stock
+          in: query
+          description: 'Filter products to include out of stock as well'
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    $ref: '#/components/schemas/MetaData'
+                  products:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidToken'
+      security:
+      - Token: []
+  /send_points:
+    post:
+      tags:
+        - Order management
+      summary: Send points
+      description: |
+        Gift store specific points to a user
+      operationId: sendPoints
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendPointResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidToken'
+        '422':
+          description: Error occurred while sending points
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Store not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidToken'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: 'object'
+              properties:
+                store_number:
+                  type: string
+                  description: 'Store Number. Optional for sending Stadium points'
+                  minimum: 1
+                contact_emails:
+                  type: string
+                  description: 'Comma separated emails of recipients eg: `a@b.com,c@d.com`'
+                organizer_share:
+                  type: integer
+                  format: int32
+                  description: Points to send per recipient
+                expected_count:
+                  type: integer
+                  format: int32
+                  description: Number of Recipients
+                send_shop_points:
+                  type: boolean
+                  description: 'Whether to send shop points or Stadium points. Default: False'
+                treat_name:
+                  type: string
+                  description: Name of the treat
+                  example: Partner api treat
+                rlp_message:
+                  type: string
+                  description: Recipient Landing Page message
+                payment_method:
+                  type: array
+                  description: valid payment method are `use_wallet_money` or `use_global_point` pass either one or both in an array
+                  items:
+                    type: string
+                auto_accept_points:
+                  type: boolean
+                  description: 'Whether the points will be auto accepted, skipping the acceptance flow. Default: False'
+                billing_country:
+                  type: string
+                  description: ISO code for billing country
+                  example: US
+                billing_zipcode:
+                  type: string
+                  description: Billing zipcode
+                  example: 94049
+              required:
+                - contact_emails
+                - organizer_share
+                - expected_count
+      security:
+      - Token: []
+  /orders:
+    post:
+      tags:
+        - Order management
+      summary: Create order
+      description: |
+        Place an order
+      operationId: createOrder
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '422':
+          description: Error occurred while placing order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidToken'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: 'object'
+              properties:
+                store_number:
+                  type: string
+                  description: 'Store Number eg: `S235588918`'
+                country_iso:
+                  type: string
+                  description: 'ISO code of the country eg: `US`'
+                address:
+                  type: object
+                  properties:
+                    first_name:
+                      type: string
+                      description: 'First name'
+                    last_name:
+                      type: string
+                      description: 'Last name'
+                    phone:
+                      type: string
+                      description: 'Phone number'
+                    zip_code:
+                      type: string
+                      description: Zip Code
+                    street_1:
+                      type: string
+                      description: Address 1st line
+                    street_2:
+                      type: string
+                      description: Address 2nd line
+                    city:
+                      type: string
+                      description: City
+                    state_name:
+                      type: string
+                      description: State Name
+                products:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: ID of the variant to purchase eg:`10/1/9`
+                      quantity:
+                        type: integer
+                        format: int32
+                        description: Quantity of variant to purchase
+                        minimum: 1
+                      product_type:
+                        type: string
+                        description: 'Variant type eg:`Spree::Product`'
+              required:
+                - store_number
+                - country_iso
+                - address
+                - products
+      security:
+      - Token: []
+  '/orders/{order_number}/checkout':
+    post:
+      tags:
+        - Order management
+      summary: Order Checkout
+      description: |
+        Checkout the placed order
+      operationId: orderCheckout
+      parameters:
+        - name: order_number
+          in: path
+          description: Order number
+          required: true
+          schema:
+            type: string
+        - name: payment_method
+          in: query
+          description: Payment Method
+          required: true
+          schema:
+            type: string
+            enum:
+              - use_global_point
+              - use_wallet_money
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidToken'
+        '422':
+          description: Error occurred while placing order
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_details:
+                    $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidToken'
+      security:
+      - Token: []
+  '/orders/{order_number}':
+    get:
+      tags:
+        - Order management
+      summary: Order details
+      description: |
+        Get details for a placed order
+      operationId: orderDetails
+      parameters:
+        - name: order_number
+          in: path
+          description: Order number
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDetails'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidToken'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidToken'
+      security:
+      - Token: []
+  '/orders/{order_number}/shipment_status':
+    get:
+      tags:
+        - Order management
+      summary: Order shipment details
+      description: |
+        Get shipment status and details for a placed order
+      operationId: orderShipmentDetails
+      parameters:
+        - name: order_number
+          in: path
+          description: Order number
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderShipmentDetails'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidToken'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidToken'
+      security:
+      - Token: []
+  '/automations/orders':
+    post:
+      tags:
+        - Automation management
+      summary: Create automation order
+      description: |
+        Place order for webhook automation
+
+        Each request will create a new order using the provided list of email addresses.<br/>
+        You can check the status of your order using the identifier returned in the response.
+
+        Please note that it may take up to 30 minutes to process the order.
+      operationId: createAutomationOrder
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createAutomationOrderResponse'
+        '422':
+          description: Error occurred while creating automation order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Automation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidApiKey'
+      parameters:
+          - name: api_key
+            in: header
+            required: true
+            schema:
+              type: string
+            description: 'API key of the webhook automation eg: `ryfMiGzMp8ZTisWYbZUhjkVL`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: 'object'
+              properties:
+                contact_emails:
+                  type: array
+                  items:
+                    type: string
+                    format: email
+                    description: 'Email of the recipient, e.g., `abc@example.com`'
+                recipient_message:
+                  type: string
+                  example: 'Happy Birthday!'
+                  description: 'This message is shown to the recipient at redemption. If no custom text is set, we will display the message configured during automation setup.'
+                sender_name:
+                  type: string
+                  example: 'John Doe'
+                  description: 'Name of the sender. If no name is provided, we will display the sender name configured during automation setup.'
+                budget:
+                  type: number
+                  example: 2500
+                  description: 'Amount of points to be gifted. If no budget is provided, we will send the points budget configured during automation setup.'
+              required:
+                - contact_emails
+  '/automations/order_status':
+      get:
+        tags:
+          - Automation management
+        summary: Check order status
+        description: Check status for automation order
+        operationId: checkOrderStatus
+        responses:
+          '200':
+            description: Successful response
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/CheckOrderStatusResponse'
+          '422':
+            description: Something went wrong, please try again later!
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/OrderStatusApiErrorResponse'
+          '404':
+            description: Automation/Order not found.
+            content:
+              application/json:
+                schema:
+                  oneOf:
+                    - $ref: '#/components/schemas/InvalidApiKey'
+                    - $ref: '#/components/schemas/InvalidIdentifier'
+        parameters:
+          - name: api_key
+            in: header
+            required: true
+            schema:
+              type: string
+            description: 'API key of the webhook automation eg: `ryfMiGzMp8ZTisWYbZUhjkVL`'
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: 'object'
+                properties:
+                  order_identifier:
+                    type: string
+                    description: 'Identifier of the order associated eg: `qmfMiGzMp8ZTiyuwZUhjyuis`'
+                required:
+                  - order_identifier
+components:
+  securitySchemes:
+    Token:
+      type: http
+      in: header
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Id:
+      type: integer
+      format: int64
+      readOnly: true
+    StoreConfig:
+      type: object
+      properties:
+        currency_code:
+          type: string
+          example: STC
+        currency_name:
+          type: string
+          example: Points
+        currency_prefix:
+          type: string
+        currency_suffix:
+          type: string
+          example: Pts
+    PlatformFee:
+      type: object
+      properties:
+        fee:
+          type: number
+          format: float
+        type:
+          type: string
+          example: percent
+    Store:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of store
+          example: Build My Own Shop [BYO]
+        code:
+          type: string
+          description: Store code
+          example: build-my-own-shop-byo
+        active:
+          type: boolean
+          description: Store is active or not
+        created_at:
+          type: string
+          format: date-time
+          description: Store Creation date
+        url:
+          type: string
+          format: url
+          description: Store Url
+        banner:
+          type: string
+          format: url
+          description: Store Banner Url
+        number:
+          type: string
+          description: Store number to be used in other apis
+          example: S235588918
+        config:
+          description: Store Currency Details
+          allOf:
+            - $ref: '#/components/schemas/StoreConfig'
+        order_platform_fee:
+          description: Platform Fee that will be charged on each order for this store
+          allOf:
+            - $ref: '#/components/schemas/PlatformFee'
+    MetaData:
+      type: object
+      properties:
+        page:
+          description: Current page number
+          type: integer
+          format: int32
+        per_page:
+          description: Number of products on current page
+          type: integer
+          format: int32
+        total:
+          description: Total number of products
+          type: integer
+          format: int32
+    Product:
+      type: object
+      properties:
+        id:
+          description: Product ID
+          allOf:
+            - $ref: '#/components/schemas/Id'
+        name:
+          type: string
+          description: Name of product
+        description:
+          type: string
+          description: Description of store
+        baseImage:
+          type: string
+          description: URL of product image
+        displayImage:
+          type: array
+          description: URLs of product's display images
+          items:
+            type: string
+        slug:
+          type: string
+          description: Slug of the product
+        outOfStock:
+          type: boolean
+          description: Product is out of stock or not
+        variants:
+          type: array
+          description: Variants of product
+          items:
+            $ref: '#/components/schemas/Variant'
+        taxons:
+          type: array
+          description: Taxons of product
+          items:
+            $ref: '#/components/schemas/Taxon'
+    Variant:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id of product variant to be used to create order
+          example: 0/0/0
+        sku:
+          type: string
+        externalSource:
+          type: string
+          example: SnackMagic
+        type:
+          type: string
+          example: Spree::Product
+          description: Type of product variant to be used to create order
+        price:
+          type: float
+          description: Price of product variant to be used to create order
+        outOfStock:
+          type: boolean
+        optionTypes:
+          type: array
+          description: Variant Type Definitions
+          items:
+            $ref: '#/components/schemas/OptionType'
+    OptionType:
+      type: object
+      properties:
+        key:
+          type: string
+          example: color
+        name:
+          type: string
+          example: Color
+        presentation:
+          type: string
+          example: Blue
+        value:
+          type: string
+          example: '#281E5D'
+    Taxon:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        taxonomyId:
+          type: string
+        taxonomyName:
+          type: string
+    OrderDetails:
+      type: object
+      properties:
+        number:
+          type: string
+          example: R211027588
+        total:
+          type: number
+          format: float
+          description: Order total
+        shipment_status:
+          type: string
+          description: Status of order shipment
+          example: processing
+        completed_at:
+          type: string
+          format: date-time
+          description: Order Completion Date
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderProduct'
+    Order:
+      type: object
+      properties:
+        number:
+          type: string
+          example: R211027588
+        total:
+          type: number
+          format: float
+          description: Order total
+        platform_fee:
+          type: number
+          format: float
+          description: Platform fee charged on order
+        estimated_taxes:
+          type: number
+          format: float
+          description: Estimated taxes and fees on order
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderProduct'
+    OrderProduct:
+      type: object
+      properties:
+        name:
+          type: string
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+          description: Quantity of product ordered
+        price:
+          type: number
+          format: float
+          description: Price per item in the order
+    OrderShipmentDetails:
+      type: object
+      properties:
+        order_shipment_status:
+          type: string
+          example: processing
+          description: Overall shipment status of order
+        shipment_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShippingDetail'
+    createAutomationOrderResponse:
+      type: object
+      properties:
+        identifier:
+          type: String
+          example: 'ryfMiGzMp8ZTisWYbZUhjkVL'
+          description: To identify the associated automation order
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/createAutomationOrderDetail'
+    createAutomationOrderDetail:
+      type: object
+      properties:
+        email:
+          type: string
+          example: 'abc@example.com'
+          description: email of recipient
+        status:
+          type: string
+          example: 'success'
+          description: "status of order: success|pending|enqueued|failed"
+        message:
+          type: string
+          example: 'Invalid email'
+    CheckOrderStatusResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderStatusDetail'
+    OrderStatusDetail:
+      type: object
+      properties:
+        email:
+          type: string
+          example: 'abc@example.com'
+          description: email of recipient
+        status:
+          type: string
+          example: 'success'
+          description: "status of order: success|pending|enqueued|failed"
+        order:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                id:
+                  type: integer
+                type:
+                  type: string
+                attributes:
+                  type: object
+                  properties:
+                    number:
+                      type: string
+                    total:
+                      type: integer
+                    shipment_status:
+                      type: string
+                    completed_at:
+                      type: string
+                      format: date-time
+                    products:
+                      type: array
+    ShippingDetail:
+      type: object
+      properties:
+        tracking_number:
+          type: string
+        shipment_provider:
+          type: string
+        shipped_at:
+          type: string
+          format: date-time
+        delivered_at:
+          type: string
+          format: date-time
+        status:
+          type: string
+        tracking_url:
+          type: string
+          format: url
+          description: Shipment tracking url
+        fulfillment_type:
+          type: string
+        vendor:
+          type: string
+          description: Vendor name
+        product_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShippingProductDetail'
+    ShippingProductDetail:
+      type: object
+      properties:
+        name:
+          type: string
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+          description: Quantity of product ordered
+        id:
+          description: Id of the product
+          allOf:
+            - $ref: '#/components/schemas/Id'
+    SendPointResponse:
+      type: object
+      properties:
+        number:
+          type: string
+          example: R757013334
+          description: Order Number
+        treat_name:
+          type: string
+          example: Order R757013334
+        completed_at:
+          type: string
+          format: date-time
+        invitation_link:
+          type: string
+          format: url
+        rlp_message:
+          type: string
+        refund_type:
+          type: string
+          example: global_point
+          description: Wallet name of where refund will be processed
+        total:
+          type: number
+          format: float
+          description: Order total
+        payment_state:
+          type: string
+          description: Payment state
+          example: paid
+        used_wallet_money:
+          type: string
+          description: Wallet money amount used
+          example: '1.1'
+        outstanding_balance:
+          type: string
+          description: Outstanding balance of order
+          example: '0.0'
+        available_store_credit_in_billed_currency:
+          type: string
+          description: Available wallet money balance in order billed currency
+          example: '0.0'
+        swag_store_id:
+          type: integer
+          format: int32
+        swag_store_key:
+          type: string
+          example: build-my-own-shop-byo-89671
+        swag_store_number:
+          type: string
+          example: S235588918
+        platform_fee:
+          type: number
+          format: float
+          description: Platform fee charged on order
+        estimated_taxes:
+          type: number
+          format: float
+          description: Estimated taxes and fees on order
+    User:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        stadium_points_balance:
+          type: integer
+          format: int64
+          description: Your reward point balance
+        wallet_balance:
+          type: integer
+          format: int64
+          description: Your stadium money wallet balance
+        wallet_currency:
+          $ref: '#/components/schemas/WalletCurrencyDetail'
+        billing_country:
+          type: string
+          description: ISO code of the billing country
+        billing_zipcode:
+          type: string
+          description: Billing Zip code
+    WalletCurrencyDetail:
+      type: object
+      properties:
+        code:
+          type: string
+          example: USD
+        name:
+          type: string
+          example: US Dollar
+        symbol:
+          type: string
+          example: $
+    InvalidToken:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error raised while trying to authorize the request
+          example: Invalid token
+    InvalidApiKey:
+      type: object
+      properties:
+        errors:
+          type: string
+          description: Automation with the given API key does not exist
+          example: We are unable to find automation with the given API key
+    InvalidIdentifier:
+      type: object
+      properties:
+        errors:
+          type: string
+          description: Automation with the given API key does not exist
+          example: No order found for the given identifier
+    OrderStatusApiErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: string
+          description: Something went wrong, please try again later!
+          example: Something went wrong, please try again later!
+    ApiErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              source:
+                type: object
+                properties:
+                  pointer:
+                    type: string
+              detail:
+                type: string
+                description: Error Details

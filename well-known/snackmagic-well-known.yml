@@ -1,0 +1,28 @@
+generated: '2026-07-21'
+method: searched
+note: >-
+  Probed the /.well-known/ discovery surface on the SnackMagic website and the Stadium API
+  hosts. No real documents were returned. snackmagic.com returns HTTP 200 for arbitrary
+  /.well-known/ paths but the body is the React SPA shell (soft-404), not a real
+  security.txt / ai-plugin, so those are recorded as none.
+hosts:
+- host: https://api.bystadium.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+- host: https://www.snackmagic.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    real: false
+    note: SPA soft-404 (HTML shell, no Contact/Policy fields)
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    real: false
+    note: SPA soft-404 (HTML shell)

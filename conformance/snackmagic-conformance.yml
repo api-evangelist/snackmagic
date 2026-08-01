@@ -1,0 +1,29 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/snackmagic-stadium-openapi.yml
+standards:
+- id: openapi-3.1
+  conforms: true
+  evidence: OpenAPI 3.1.0 document published at /api/v2/docs/openapi.yaml
+- id: oauth2
+  conforms: true
+  evidence: >-
+    Documented OAuth2 client-credentials, authorization-code, PKCE and refresh-token
+    flows with /oauth/authorize and /oauth/token endpoints; access tokens are JWTs.
+- id: oauth2-pkce
+  conforms: true
+  evidence: Authorization Code with PKCE (SHA256 code_challenge/code_verifier) documented for native/SPA clients.
+- id: json-api-errors
+  conforms: partial
+  evidence: >-
+    Validation errors use a JSON:API-style array { errors: [ { source: { pointer }, detail } ] };
+    other errors use ad-hoc { error } / { errors } string envelopes.
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: No application/problem+json responses.
+- id: rfc8594-sunset
+  conforms: false
+  evidence: No Sunset/Deprecation header support documented.
+- id: bearer-jwt
+  conforms: true
+  evidence: HTTP bearer scheme with JWT bearerFormat.

@@ -1,0 +1,16 @@
+generated: '2026-07-21'
+method: generated
+source: openapi/snackmagic-stadium-openapi.yml
+skills:
+- file: snackmagic-send-points.md
+  name: Send Stadium Shop points to a recipient
+  api: openapi/snackmagic-stadium-openapi.yml
+  operations: [getToken, getStores, sendPoints]
+- file: snackmagic-place-order.md
+  name: Browse a store catalog and place an order
+  api: openapi/snackmagic-stadium-openapi.yml
+  operations: [getToken, getStores, getStoreProducts, createOrder, orderCheckout, orderDetails]
+- file: snackmagic-automation-gifting.md
+  name: Trigger a webhook-automation gift order
+  api: openapi/snackmagic-stadium-openapi.yml
+  operations: [createAutomationOrder, checkOrderStatus]

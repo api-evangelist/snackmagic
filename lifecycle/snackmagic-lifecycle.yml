@@ -1,0 +1,18 @@
+generated: '2026-07-21'
+method: searched
+source: openapi/snackmagic-stadium-openapi.yml
+versioning:
+  scheme: uri-path
+  current: v2
+  location: /api/v2 path segment
+  docs: https://api.bystadium.com/api/v2/docs
+access:
+  note: >-
+    The Stadium API is available only to customers/partners on the Business and Enterprise
+    packages. See https://www.bystadium.com/go/pricing.
+status_page: https://status.bystadium.com
+deprecation:
+  policy_url: null
+  sunset_header: false
+  note: No formal deprecation policy or RFC 8594 Sunset/Deprecation header support was found.
+deprecated_operations: []

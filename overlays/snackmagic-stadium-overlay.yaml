@@ -1,0 +1,31 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Stadium API (SnackMagic)
+  version: 1.0.0
+extends: openapi/snackmagic-stadium-openapi.yml
+actions:
+- target: $.info
+  update:
+    x-apievangelist-provider: snackmagic
+    x-apievangelist-brand-of: stadium
+    x-apievangelist-categories:
+      - gifting
+      - rewards
+      - swag
+      - e-commerce
+      - consumer
+- target: $.info
+  update:
+    x-apievangelist-auth-summary: >-
+      Bearer JWT (OAuth2 client-credentials / authorization-code / PKCE / refresh) for
+      most endpoints; static api_key header for webhook automation endpoints.
+- target: $.info
+  update:
+    x-apievangelist-conventions:
+      pagination: page/per_page (offset)
+      idempotency: not-supported
+      error-envelope: "JSON-API-style errors array (source.pointer + detail); not RFC 9457"
+      funding: pre-purchased Wallet balance or global Stadium Points
+- target: $.info
+  update:
+    x-apievangelist-sandbox: https://api.preprod.bystadium.com/api/v2

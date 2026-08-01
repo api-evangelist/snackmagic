@@ -1,0 +1,46 @@
+generated: '2026-07-21'
+method: derived
+status: candidate
+source: openapi/snackmagic-stadium-openapi.yml
+note: >-
+  No official hosted/remote MCP server was found for SnackMagic / Stadium. This is a
+  candidate tool list derived one-to-one from the Stadium API OpenAPI operations, for
+  wrapping the REST API as MCP tools.
+server:
+  name: snackmagic-stadium
+  transport: http
+  base_url: https://api.bystadium.com/api/v2
+tools:
+- name: get_token
+  description: Get an access token (client credentials) to use as a Bearer token.
+  source_operation: openapi/snackmagic-stadium-openapi.yml#getToken
+- name: get_user_profile
+  description: Get the authenticated user's profile, points and wallet balances.
+  source_operation: openapi/snackmagic-stadium-openapi.yml#getUserProfile
+- name: get_stores
+  description: List the Stadium Shops available to the account.
+  source_operation: openapi/snackmagic-stadium-openapi.yml#getStores
+- name: get_store_products
+  description: List catalog products for a store (paginated).
+  source_operation: openapi/snackmagic-stadium-openapi.yml#getStoreProducts
+- name: send_points
+  description: Send Stadium Shop points to a recipient via a treat link.
+  source_operation: openapi/snackmagic-stadium-openapi.yml#sendPoints
+- name: create_order
+  description: Create an order against a store.
+  source_operation: openapi/snackmagic-stadium-openapi.yml#createOrder
+- name: order_checkout
+  description: Checkout a placed order (pay from wallet or global points).
+  source_operation: openapi/snackmagic-stadium-openapi.yml#orderCheckout
+- name: order_details
+  description: Get details for a placed order.
+  source_operation: openapi/snackmagic-stadium-openapi.yml#orderDetails
+- name: order_shipment_status
+  description: Get shipment status and tracking for an order.
+  source_operation: openapi/snackmagic-stadium-openapi.yml#orderShipmentDetails
+- name: create_automation_order
+  description: Place a webhook-automation order for a list of recipient emails.
+  source_operation: openapi/snackmagic-stadium-openapi.yml#createAutomationOrder
+- name: check_automation_order_status
+  description: Check the status of a webhook-automation order by identifier.
+  source_operation: openapi/snackmagic-stadium-openapi.yml#checkOrderStatus
