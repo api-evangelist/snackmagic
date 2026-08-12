@@ -230,6 +230,10 @@ apis:
   - type: Sandbox
     url: sandbox/snackmagic-sandbox.yml
 common:
+- type: MCPServer
+  url: mcp/snackmagic-mcp.yml
+- type: Overlay
+  url: overlays/snackmagic-stadium-overlay.yaml
 - type: Website
   url: https://snackmagic.com
 - type: DeveloperPortal
