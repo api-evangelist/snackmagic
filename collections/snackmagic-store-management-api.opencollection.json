@@ -1,0 +1,110 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Stadium Authentication Store management API",
+    "version": "2.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Store management",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get stores",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.bystadium.com/api/v2/stores",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get all the stores for the current user.\n"
+        },
+        {
+          "info": {
+            "name": "Get store products",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.bystadium.com/api/v2/stores/:store_number/products",
+            "params": [
+              {
+                "name": "store_number",
+                "value": "",
+                "type": "path",
+                "description": "Number of store"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Page number"
+              },
+              {
+                "name": "per_page",
+                "value": "",
+                "type": "query",
+                "description": "Number of products per page"
+              },
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Example price:asc"
+              },
+              {
+                "name": "country_code",
+                "value": "",
+                "type": "query",
+                "description": "2-digit ISO Country Code (eg: US, IN). Deafult is US"
+              },
+              {
+                "name": "color",
+                "value": "",
+                "type": "query",
+                "description": "Filter products by color"
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query",
+                "description": "Filter products by size"
+              },
+              {
+                "name": "only_inactive_products",
+                "value": "",
+                "type": "query",
+                "description": "Filter products that are inactive"
+              },
+              {
+                "name": "include_inactive_products",
+                "value": "",
+                "type": "query",
+                "description": "Filter products to include inactive as well"
+              },
+              {
+                "name": "with_out_of_stock",
+                "value": "",
+                "type": "query",
+                "description": "Filter products to include out of stock as well"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get all the products for the store\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

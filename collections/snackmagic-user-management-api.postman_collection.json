@@ -1,0 +1,164 @@
+{
+  "item": [
+    {
+      "id": "b0ac3f6e-3eea-4b8f-86db-e3f912530ab7",
+      "name": "User management",
+      "description": {
+        "content": "User related API endpoints",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "0f877688-bfc0-4bff-8d34-471700b487d4",
+          "name": "Get user profile",
+          "request": {
+            "name": "Get user profile",
+            "description": {
+              "content": "Get the user profile including wallet balance.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "users",
+                "me"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "7a4ef65f-3c65-4d4e-a02e-6ff2da4e66d7",
+              "name": "Successful response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "users",
+                    "me"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"first_name\": \"string\",\n  \"last_name\": \"string\",\n  \"email\": \"string\",\n  \"stadium_points_balance\": 1004,\n  \"wallet_balance\": 4094,\n  \"wallet_currency\": {\n    \"code\": \"USD\",\n    \"name\": \"US Dollar\",\n    \"symbol\": \"$\"\n  },\n  \"billing_country\": \"string\",\n  \"billing_zipcode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ea7d7ba0-7429-48cd-b1ef-72cebd6243d5",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "users",
+                    "me"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"Invalid token\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.bystadium.com/api/v2",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "d3195777-931b-411c-81d9-7f63e6a1f9c7",
+    "name": "Stadium Authentication User management API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "### *Stadium’s API can only be used by customers and partners on the Business and Enterprise Packages. See [here](https://www.bystadium.com/pricing) for more details.\n\n# Introduction\n\nStadium's API lets you embed a global gift, rewards, and branded swag catalog on your own native application.\n\nYou can also embed a unique treat link to send Stadium Shop points for your users to redeem gifts, rewards and swag, on Stadium.\n\n- Pull in and display your unique Stadium Shop products.\n- Place orders against your Stadium Shop from your website or app, and pass on fulfillment to Stadium.\n- Send Stadium Shop points via our secure treat link for users to redeem gifts, rewards and branded swag to your branded Stadium Shop, on Stadium. This replicates our send points flow without having to generate an admin/organizer order from Stadium.\n\n# Getting started\n\nTo start using the API, you'll need to set up a shop against which you would be placing orders.\n\nTo set up a shop:\n\n1. Sign up for a **free** Stadium account at: https://www.bystadium.com/. See Login/Sign Up in the top right corner of the page.\n2. Create your **free** Stadium Shop signup for an account at **Stadium** and create as many shops as you desire. [Video demo link](https://youtu.be/VAMfQMHqVmY)\n3. Once you have set up the shop, edit your shop catalog on the Stadium Shop’s dashboard so that you curate and approve all SKUs you are making available from our master catalog. [Video demo link](https://youtu.be/DEY1N2bBYtw)\n4. Set up your funding source. Because there will be no checkout page to pay for orders on Stadium’s front-end website, API users must deposit Wallet funds which can be used as a pre-purchased balance to pay for orders every time a recipient redeems Stadium products on a third-party platform. [More details here](https://www.bystadium.com/wallet)\n5. Once you have created an account, set up your shop, finalized your catalog, and set up a funding source, reach out to our support at engineering@bystadium.com and we'll provide you with access credentials which can be used to generate tokens and make API requests.\n\n\n# Environments\n\nStadium's API has two environments:\n\n- **Production**\n  https://api.bystadium.com\n\n- **Sandbox**\n  https://api.preprod.bystadium.com\n\n\n# Sandbox\n\nYou can use the Sandbox environment to create test orders without being charged for them. Your sandbox account\nis entirely separate account from production, so you can do your testing without affecting your main account.\n\nTo setup a sandbox account, please email engineering@bystadium.com for basic credentials. Once you receive those\nto access the sandbox environment, you can create a test user account and Stadium Shop by signing up on\nhttps://preprod.bystadium.com/shops/all\n\nOnce done, reach out to our support at engineering@bystadium.com and we’ll help you get started with API keys.\n\n\nContact Support:\n Name: API Support\n Email: engineering@bystadium.com",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Stadium Authentication Order management API",
+    "version": "2.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Order management",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Send points",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.bystadium.com/api/v2/send_points",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Gift store specific points to a user\n"
+        },
+        {
+          "info": {
+            "name": "Create order",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.bystadium.com/api/v2/orders",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Place an order\n"
+        },
+        {
+          "info": {
+            "name": "Order Checkout",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.bystadium.com/api/v2/orders/:order_number/checkout",
+            "params": [
+              {
+                "name": "order_number",
+                "value": "",
+                "type": "path",
+                "description": "Order number"
+              },
+              {
+                "name": "payment_method",
+                "value": "",
+                "type": "query",
+                "description": "Payment Method"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Checkout the placed order\n"
+        },
+        {
+          "info": {
+            "name": "Order details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.bystadium.com/api/v2/orders/:order_number",
+            "params": [
+              {
+                "name": "order_number",
+                "value": "",
+                "type": "path",
+                "description": "Order number"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get details for a placed order\n"
+        },
+        {
+          "info": {
+            "name": "Order shipment details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.bystadium.com/api/v2/orders/:order_number/shipment_status",
+            "params": [
+              {
+                "name": "order_number",
+                "value": "",
+                "type": "path",
+                "description": "Order number"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get shipment status and details for a placed order\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -2,10 +2,8 @@ generated: '2026-07-21'
 method: derived
 status: candidate
 source: openapi/snackmagic-stadium-openapi.yml
-note: >-
-  No official hosted/remote MCP server was found for SnackMagic / Stadium. This is a
-  candidate tool list derived one-to-one from the Stadium API OpenAPI operations, for
-  wrapping the REST API as MCP tools.
+note: No official hosted/remote MCP server was found for SnackMagic / Stadium. This is a candidate tool
+  list derived one-to-one from the Stadium API OpenAPI operations, for wrapping the REST API as MCP tools.
 server:
   name: snackmagic-stadium
   transport: http
@@ -44,3 +42,9 @@ tools:
 - name: check_automation_order_status
   description: Check the status of a webhook-automation order by identifier.
   source_operation: openapi/snackmagic-stadium-openapi.yml#checkOrderStatus
+deployment:
+  mode: none
+  verified: derived
+  tools: 11
+  checked: '2026-08-12'
+  source: catalog MCP census

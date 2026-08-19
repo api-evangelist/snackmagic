@@ -1,0 +1,60 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Stadium Authentication Automation management API",
+    "version": "2.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Automation management",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create automation order",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.bystadium.com/api/v2/automations/orders",
+            "headers": [
+              {
+                "name": "api_key",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Place order for webhook automation\n\nEach request will create a new order using the provided list of email addresses.<br/>\nYou can check the status of your order using the identifier returned in the response.\n\nPlease note that it may take up to 30 minutes to process the order.\n"
+        },
+        {
+          "info": {
+            "name": "Check order status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.bystadium.com/api/v2/automations/order_status",
+            "headers": [
+              {
+                "name": "api_key",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Check status for automation order"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

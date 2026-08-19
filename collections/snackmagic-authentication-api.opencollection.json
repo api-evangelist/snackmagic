@@ -1,0 +1,93 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Stadium Authentication API",
+    "version": "2.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Authentication",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get token",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.bystadium.com/api/v2/oauth/token",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Get an access token that needs to be set as Bearer token for authorizing API.\n"
+        },
+        {
+          "info": {
+            "name": "Authorize",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.bystadium.com/api/v2/oauth/authorize",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Redirects to the Stadium login page returning the authorization `code`\n"
+        },
+        {
+          "info": {
+            "name": "Get token by code",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.bystadium.com/api/v2/oauth/token_by_code",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Exchange the authorization _code_ for `access_token` and `refresh_token`\n"
+        },
+        {
+          "info": {
+            "name": "Get token by refresh token",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.bystadium.com/api/v2/oauth/token_by_refresh_token",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Exchange the `access_token` and `refresh_token` for new `access_token`\n"
+        },
+        {
+          "info": {
+            "name": "Validate token",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.bystadium.com/api/v2/oauth/validate",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Validate whether the access token is valid and/or expired\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

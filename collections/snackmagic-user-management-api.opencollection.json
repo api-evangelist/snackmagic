@@ -1,0 +1,33 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Stadium Authentication User management API",
+    "version": "2.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "User management",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get user profile",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.bystadium.com/api/v2/users/me",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get the user profile including wallet balance.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
