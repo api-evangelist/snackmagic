@@ -169,6 +169,8 @@ apis:
   humanURL: https://api.bystadium.com/api/v2/docs
   baseURL: https://api.bystadium.com/api/v2
   tags:
+  - Order Management
+  tags_raw:
   - Order management
   properties:
   - type: OpenAPI
@@ -191,6 +193,8 @@ apis:
   humanURL: https://api.bystadium.com/api/v2/docs
   baseURL: https://api.bystadium.com/api/v2
   tags:
+  - Store Management
+  tags_raw:
   - Store management
   properties:
   - type: OpenAPI
@@ -213,6 +217,8 @@ apis:
   humanURL: https://api.bystadium.com/api/v2/docs
   baseURL: https://api.bystadium.com/api/v2
   tags:
+  - User Management
+  tags_raw:
   - User management
   properties:
   - type: OpenAPI
