@@ -9,6 +9,18 @@ description: >-
   orders funded by a pre-purchased Wallet balance, sending Stadium Shop points via treat
   links, and triggering webhook-automation gift orders. This profile was enriched from the
   provider's public OpenAPI and developer surface.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: unknown
   onboarding: self-serve
