@@ -1,11 +1,7 @@
 {
   "provider": "snackmagic",
   "sources": [
-    "snackmagic-authentication-api-openapi.yml",
-    "snackmagic-automation-management-api-openapi.yml",
-    "snackmagic-order-management-api-openapi.yml",
-    "snackmagic-store-management-api-openapi.yml",
-    "snackmagic-user-management-api-openapi.yml"
+    "_original/snackmagic-stadium-openapi.yml"
   ],
   "outputs": [
     "snackmagic-authentication-api-openapi.yml",
@@ -17,6 +13,16 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "snackmagic-stadium-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "snackmagic-authentication-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "snackmagic-automation-management-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "snackmagic-order-management-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "snackmagic-store-management-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "snackmagic-user-management-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
