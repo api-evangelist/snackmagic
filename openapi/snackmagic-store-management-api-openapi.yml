@@ -136,21 +136,46 @@ paths:
       - Token: []
 components:
   schemas:
-    MetaData:
+    StoreConfig:
       type: object
       properties:
-        page:
-          description: Current page number
-          type: integer
-          format: int32
-        per_page:
-          description: Number of products on current page
-          type: integer
-          format: int32
-        total:
-          description: Total number of products
-          type: integer
-          format: int32
+        currency_code:
+          type: string
+          example: STC
+        currency_name:
+          type: string
+          example: Points
+        currency_prefix:
+          type: string
+        currency_suffix:
+          type: string
+          example: Pts
+    Variant:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id of product variant to be used to create order
+          example: 0/0/0
+        sku:
+          type: string
+        externalSource:
+          type: string
+          example: SnackMagic
+        type:
+          type: string
+          example: Spree::Product
+          description: Type of product variant to be used to create order
+        price:
+          type: float
+          description: Price of product variant to be used to create order
+        outOfStock:
+          type: boolean
+        optionTypes:
+          type: array
+          description: Variant Type Definitions
+          items:
+            $ref: '#/components/schemas/OptionType'
     Store:
       type: object
       properties:
@@ -189,22 +214,10 @@ components:
           description: Platform Fee that will be charged on each order for this store
           allOf:
           - $ref: '#/components/schemas/PlatformFee'
-    PlatformFee:
-      type: object
-      properties:
-        fee:
-          type: number
-          format: float
-        type:
-          type: string
-          example: percent
-    InvalidToken:
-      type: object
-      properties:
-        error:
-          type: string
-          description: Error raised while trying to authorize the request
-          example: Invalid token
+    Id:
+      type: integer
+      format: int64
+      readOnly: true
     Product:
       type: object
       properties:
@@ -242,36 +255,21 @@ components:
           description: Taxons of product
           items:
             $ref: '#/components/schemas/Taxon'
-    Variant:
+    MetaData:
       type: object
       properties:
-        id:
-          type: string
-          description: Id of product variant to be used to create order
-          example: 0/0/0
-        sku:
-          type: string
-        externalSource:
-          type: string
-          example: SnackMagic
-        type:
-          type: string
-          example: Spree::Product
-          description: Type of product variant to be used to create order
-        price:
-          type: float
-          description: Price of product variant to be used to create order
-        outOfStock:
-          type: boolean
-        optionTypes:
-          type: array
-          description: Variant Type Definitions
-          items:
-            $ref: '#/components/schemas/OptionType'
-    Id:
-      type: integer
-      format: int64
-      readOnly: true
+        page:
+          description: Current page number
+          type: integer
+          format: int32
+        per_page:
+          description: Number of products on current page
+          type: integer
+          format: int32
+        total:
+          description: Total number of products
+          type: integer
+          format: int32
     OptionType:
       type: object
       properties:
@@ -287,20 +285,15 @@ components:
         value:
           type: string
           example: '#281E5D'
-    StoreConfig:
+    PlatformFee:
       type: object
       properties:
-        currency_code:
+        fee:
+          type: number
+          format: float
+        type:
           type: string
-          example: STC
-        currency_name:
-          type: string
-          example: Points
-        currency_prefix:
-          type: string
-        currency_suffix:
-          type: string
-          example: Pts
+          example: percent
     Taxon:
       type: object
       properties:
@@ -312,6 +305,13 @@ components:
           type: string
         taxonomyName:
           type: string
+    InvalidToken:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error raised while trying to authorize the request
+          example: Invalid token
   securitySchemes:
     Token:
       type: http

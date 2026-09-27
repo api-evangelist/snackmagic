@@ -318,49 +318,22 @@ paths:
       - Token: []
 components:
   schemas:
-    OrderProduct:
+    ApiErrorResponse:
       type: object
       properties:
-        name:
-          type: string
-        quantity:
-          type: integer
-          format: int32
-          minimum: 1
-          description: Quantity of product ordered
-        price:
-          type: number
-          format: float
-          description: Price per item in the order
-    Order:
-      type: object
-      properties:
-        number:
-          type: string
-          example: R211027588
-        total:
-          type: number
-          format: float
-          description: Order total
-        platform_fee:
-          type: number
-          format: float
-          description: Platform fee charged on order
-        estimated_taxes:
-          type: number
-          format: float
-          description: Estimated taxes and fees on order
-        products:
+        errors:
           type: array
           items:
-            $ref: '#/components/schemas/OrderProduct'
-    InvalidToken:
-      type: object
-      properties:
-        error:
-          type: string
-          description: Error raised while trying to authorize the request
-          example: Invalid token
+            type: object
+            properties:
+              source:
+                type: object
+                properties:
+                  pointer:
+                    type: string
+              detail:
+                type: string
+                description: Error Details
     ShippingDetail:
       type: object
       properties:
@@ -389,6 +362,35 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ShippingProductDetail'
+    OrderProduct:
+      type: object
+      properties:
+        name:
+          type: string
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+          description: Quantity of product ordered
+        price:
+          type: number
+          format: float
+          description: Price per item in the order
+    Id:
+      type: integer
+      format: int64
+      readOnly: true
+    OrderShipmentDetails:
+      type: object
+      properties:
+        order_shipment_status:
+          type: string
+          example: processing
+          description: Overall shipment status of order
+        shipment_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShippingDetail'
     ShippingProductDetail:
       type: object
       properties:
@@ -425,22 +427,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/OrderProduct'
-    ApiErrorResponse:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            type: object
-            properties:
-              source:
-                type: object
-                properties:
-                  pointer:
-                    type: string
-              detail:
-                type: string
-                description: Error Details
     SendPointResponse:
       type: object
       properties:
@@ -500,21 +486,35 @@ components:
           type: number
           format: float
           description: Estimated taxes and fees on order
-    Id:
-      type: integer
-      format: int64
-      readOnly: true
-    OrderShipmentDetails:
+    Order:
       type: object
       properties:
-        order_shipment_status:
+        number:
           type: string
-          example: processing
-          description: Overall shipment status of order
-        shipment_details:
+          example: R211027588
+        total:
+          type: number
+          format: float
+          description: Order total
+        platform_fee:
+          type: number
+          format: float
+          description: Platform fee charged on order
+        estimated_taxes:
+          type: number
+          format: float
+          description: Estimated taxes and fees on order
+        products:
           type: array
           items:
-            $ref: '#/components/schemas/ShippingDetail'
+            $ref: '#/components/schemas/OrderProduct'
+    InvalidToken:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error raised while trying to authorize the request
+          example: Invalid token
   securitySchemes:
     Token:
       type: http
