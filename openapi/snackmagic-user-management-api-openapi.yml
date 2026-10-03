@@ -69,13 +69,6 @@ components:
         billing_zipcode:
           type: string
           description: Billing Zip code
-    InvalidToken:
-      type: object
-      properties:
-        error:
-          type: string
-          description: Error raised while trying to authorize the request
-          example: Invalid token
     WalletCurrencyDetail:
       type: object
       properties:
@@ -88,6 +81,13 @@ components:
         symbol:
           type: string
           example: $
+    InvalidToken:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error raised while trying to authorize the request
+          example: Invalid token
   securitySchemes:
     Token:
       type: http
