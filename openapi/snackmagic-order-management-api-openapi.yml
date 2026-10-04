@@ -318,34 +318,6 @@ paths:
       - Token: []
 components:
   schemas:
-    ShippingDetail:
-      type: object
-      properties:
-        tracking_number:
-          type: string
-        shipment_provider:
-          type: string
-        shipped_at:
-          type: string
-          format: date-time
-        delivered_at:
-          type: string
-          format: date-time
-        status:
-          type: string
-        tracking_url:
-          type: string
-          format: url
-          description: Shipment tracking url
-        fulfillment_type:
-          type: string
-        vendor:
-          type: string
-          description: Vendor name
-        product_details:
-          type: array
-          items:
-            $ref: '#/components/schemas/ShippingProductDetail'
     OrderShipmentDetails:
       type: object
       properties:
@@ -357,87 +329,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ShippingDetail'
-    Order:
-      type: object
-      properties:
-        number:
-          type: string
-          example: R211027588
-        total:
-          type: number
-          format: float
-          description: Order total
-        platform_fee:
-          type: number
-          format: float
-          description: Platform fee charged on order
-        estimated_taxes:
-          type: number
-          format: float
-          description: Estimated taxes and fees on order
-        products:
-          type: array
-          items:
-            $ref: '#/components/schemas/OrderProduct'
-    ApiErrorResponse:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            type: object
-            properties:
-              source:
-                type: object
-                properties:
-                  pointer:
-                    type: string
-              detail:
-                type: string
-                description: Error Details
-    InvalidToken:
-      type: object
-      properties:
-        error:
-          type: string
-          description: Error raised while trying to authorize the request
-          example: Invalid token
-    OrderProduct:
-      type: object
-      properties:
-        name:
-          type: string
-        quantity:
-          type: integer
-          format: int32
-          minimum: 1
-          description: Quantity of product ordered
-        price:
-          type: number
-          format: float
-          description: Price per item in the order
-    OrderDetails:
-      type: object
-      properties:
-        number:
-          type: string
-          example: R211027588
-        total:
-          type: number
-          format: float
-          description: Order total
-        shipment_status:
-          type: string
-          description: Status of order shipment
-          example: processing
-        completed_at:
-          type: string
-          format: date-time
-          description: Order Completion Date
-        products:
-          type: array
-          items:
-            $ref: '#/components/schemas/OrderProduct'
     SendPointResponse:
       type: object
       properties:
@@ -497,10 +388,50 @@ components:
           type: number
           format: float
           description: Estimated taxes and fees on order
-    Id:
-      type: integer
-      format: int64
-      readOnly: true
+    ApiErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              source:
+                type: object
+                properties:
+                  pointer:
+                    type: string
+              detail:
+                type: string
+                description: Error Details
+    ShippingDetail:
+      type: object
+      properties:
+        tracking_number:
+          type: string
+        shipment_provider:
+          type: string
+        shipped_at:
+          type: string
+          format: date-time
+        delivered_at:
+          type: string
+          format: date-time
+        status:
+          type: string
+        tracking_url:
+          type: string
+          format: url
+          description: Shipment tracking url
+        fulfillment_type:
+          type: string
+        vendor:
+          type: string
+          description: Vendor name
+        product_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShippingProductDetail'
     ShippingProductDetail:
       type: object
       properties:
@@ -515,6 +446,75 @@ components:
           description: Id of the product
           allOf:
           - $ref: '#/components/schemas/Id'
+    Id:
+      type: integer
+      format: int64
+      readOnly: true
+    Order:
+      type: object
+      properties:
+        number:
+          type: string
+          example: R211027588
+        total:
+          type: number
+          format: float
+          description: Order total
+        platform_fee:
+          type: number
+          format: float
+          description: Platform fee charged on order
+        estimated_taxes:
+          type: number
+          format: float
+          description: Estimated taxes and fees on order
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderProduct'
+    OrderProduct:
+      type: object
+      properties:
+        name:
+          type: string
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+          description: Quantity of product ordered
+        price:
+          type: number
+          format: float
+          description: Price per item in the order
+    InvalidToken:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error raised while trying to authorize the request
+          example: Invalid token
+    OrderDetails:
+      type: object
+      properties:
+        number:
+          type: string
+          example: R211027588
+        total:
+          type: number
+          format: float
+          description: Order total
+        shipment_status:
+          type: string
+          description: Status of order shipment
+          example: processing
+        completed_at:
+          type: string
+          format: date-time
+          description: Order Completion Date
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderProduct'
   securitySchemes:
     Token:
       type: http

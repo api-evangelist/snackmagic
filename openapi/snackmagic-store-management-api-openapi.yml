@@ -136,6 +136,34 @@ paths:
       - Token: []
 components:
   schemas:
+    OptionType:
+      type: object
+      properties:
+        key:
+          type: string
+          example: color
+        name:
+          type: string
+          example: Color
+        presentation:
+          type: string
+          example: Blue
+        value:
+          type: string
+          example: '#281E5D'
+    Id:
+      type: integer
+      format: int64
+      readOnly: true
+    PlatformFee:
+      type: object
+      properties:
+        fee:
+          type: number
+          format: float
+        type:
+          type: string
+          example: percent
     Taxon:
       type: object
       properties:
@@ -147,15 +175,6 @@ components:
           type: string
         taxonomyName:
           type: string
-    PlatformFee:
-      type: object
-      properties:
-        fee:
-          type: number
-          format: float
-        type:
-          type: string
-          example: percent
     MetaData:
       type: object
       properties:
@@ -171,6 +190,20 @@ components:
           description: Total number of products
           type: integer
           format: int32
+    StoreConfig:
+      type: object
+      properties:
+        currency_code:
+          type: string
+          example: STC
+        currency_name:
+          type: string
+          example: Points
+        currency_prefix:
+          type: string
+        currency_suffix:
+          type: string
+          example: Pts
     InvalidToken:
       type: object
       properties:
@@ -178,6 +211,43 @@ components:
           type: string
           description: Error raised while trying to authorize the request
           example: Invalid token
+    Product:
+      type: object
+      properties:
+        id:
+          description: Product ID
+          allOf:
+          - $ref: '#/components/schemas/Id'
+        name:
+          type: string
+          description: Name of product
+        description:
+          type: string
+          description: Description of store
+        baseImage:
+          type: string
+          description: URL of product image
+        displayImage:
+          type: array
+          description: URLs of product's display images
+          items:
+            type: string
+        slug:
+          type: string
+          description: Slug of the product
+        outOfStock:
+          type: boolean
+          description: Product is out of stock or not
+        variants:
+          type: array
+          description: Variants of product
+          items:
+            $ref: '#/components/schemas/Variant'
+        taxons:
+          type: array
+          description: Taxons of product
+          items:
+            $ref: '#/components/schemas/Taxon'
     Store:
       type: object
       properties:
@@ -216,58 +286,6 @@ components:
           description: Platform Fee that will be charged on each order for this store
           allOf:
           - $ref: '#/components/schemas/PlatformFee'
-    OptionType:
-      type: object
-      properties:
-        key:
-          type: string
-          example: color
-        name:
-          type: string
-          example: Color
-        presentation:
-          type: string
-          example: Blue
-        value:
-          type: string
-          example: '#281E5D'
-    Product:
-      type: object
-      properties:
-        id:
-          description: Product ID
-          allOf:
-          - $ref: '#/components/schemas/Id'
-        name:
-          type: string
-          description: Name of product
-        description:
-          type: string
-          description: Description of store
-        baseImage:
-          type: string
-          description: URL of product image
-        displayImage:
-          type: array
-          description: URLs of product's display images
-          items:
-            type: string
-        slug:
-          type: string
-          description: Slug of the product
-        outOfStock:
-          type: boolean
-          description: Product is out of stock or not
-        variants:
-          type: array
-          description: Variants of product
-          items:
-            $ref: '#/components/schemas/Variant'
-        taxons:
-          type: array
-          description: Taxons of product
-          items:
-            $ref: '#/components/schemas/Taxon'
     Variant:
       type: object
       properties:
@@ -294,24 +312,6 @@ components:
           description: Variant Type Definitions
           items:
             $ref: '#/components/schemas/OptionType'
-    Id:
-      type: integer
-      format: int64
-      readOnly: true
-    StoreConfig:
-      type: object
-      properties:
-        currency_code:
-          type: string
-          example: STC
-        currency_name:
-          type: string
-          example: Points
-        currency_prefix:
-          type: string
-        currency_suffix:
-          type: string
-          example: Pts
   securitySchemes:
     Token:
       type: http
