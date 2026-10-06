@@ -43,7 +43,7 @@ x-tier: stub
 x-tier-reason: portfolio-lead
 specificationVersion: '0.23'
 created: '2026-07-17'
-modified: '2026-07-21'
+modified: '2026-10-06'
 tags:
 - Company
 - Consumer
@@ -248,6 +248,10 @@ apis:
   - type: Sandbox
     url: sandbox/snackmagic-sandbox.yml
 common:
+- url: https://www.snackmagic.com:443/blog/
+  type: Blog
+- url: https://www.snackmagic.com/blog/feed/
+  type: BlogRSS
 - type: CapabilityMap
   url: capabilities/snackmagic-capability-edges.yml
   name: SnackMagic Business Capability Map
