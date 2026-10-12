@@ -1,0 +1,46 @@
+generated: '2026-10-12'
+method: searched
+source:
+- https://zapier.com/apps/snackmagic/integrations
+checked:
+- https://composio.dev/toolkits/snackmagic
+- https://monid.ai/tools/snackmagic
+- https://n8n.io/integrations/snackmagic/
+- https://zapier.com/apps/snackmagic/integrations
+summary: null
+marketplace_apps:
+- marketplace: zapier
+  channel: ipaas-listing
+  app: snackmagic
+  url: https://zapier.com/apps/snackmagic/integrations
+  external_url: https://snackmagic.com/
+  partner_tier: BRONZE
+  triggers: []
+  actions:
+  - key: add_recipient
+    label: Add Recipient
+  searches: []
+edges:
+- partner_name: ChatGPT (OpenAI)
+  partner: null
+  partner_match: null
+  partner_candidate: null
+  type: marketplace
+  marketplace: zapier
+  channel: ipaas-usage
+  evidence: https://zapier.com/apps/snackmagic/integrations/chatgpt
+  direction: third-party
+  category: AI Assistants
+  partner_url: https://chat.openai.com/chat
+- partner_name: LinkedIn
+  partner: linkedin
+  partner_match: name-exact
+  partner_candidate: null
+  type: marketplace
+  marketplace: zapier
+  channel: ipaas-usage
+  evidence: https://zapier.com/apps/snackmagic/integrations/linkedin
+  direction: third-party
+  category: Microsoft
+  partner_url: http://www.linkedin.com/
+templates: []
