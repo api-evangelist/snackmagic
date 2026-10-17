@@ -136,20 +136,13 @@ paths:
               - order_identifier
 components:
   schemas:
-    createAutomationOrderDetail:
+    InvalidApiKey:
       type: object
       properties:
-        email:
+        errors:
           type: string
-          example: abc@example.com
-          description: email of recipient
-        status:
-          type: string
-          example: success
-          description: 'status of order: success|pending|enqueued|failed'
-        message:
-          type: string
-          example: Invalid email
+          description: Automation with the given API key does not exist
+          example: We are unable to find automation with the given API key
     ApiErrorResponse:
       type: object
       properties:
@@ -166,6 +159,20 @@ components:
               detail:
                 type: string
                 description: Error Details
+    createAutomationOrderDetail:
+      type: object
+      properties:
+        email:
+          type: string
+          example: abc@example.com
+          description: email of recipient
+        status:
+          type: string
+          example: success
+          description: 'status of order: success|pending|enqueued|failed'
+        message:
+          type: string
+          example: Invalid email
     InvalidIdentifier:
       type: object
       properties:
@@ -173,6 +180,17 @@ components:
           type: string
           description: Automation with the given API key does not exist
           example: No order found for the given identifier
+    createAutomationOrderResponse:
+      type: object
+      properties:
+        identifier:
+          type: String
+          example: ryfMiGzMp8ZTisWYbZUhjkVL
+          description: To identify the associated automation order
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/createAutomationOrderDetail'
     OrderStatusDetail:
       type: object
       properties:
@@ -208,17 +226,6 @@ components:
                       format: date-time
                     products:
                       type: array
-    createAutomationOrderResponse:
-      type: object
-      properties:
-        identifier:
-          type: String
-          example: ryfMiGzMp8ZTisWYbZUhjkVL
-          description: To identify the associated automation order
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/createAutomationOrderDetail'
     CheckOrderStatusResponse:
       type: object
       properties:
@@ -233,13 +240,6 @@ components:
           type: string
           description: Something went wrong, please try again later!
           example: Something went wrong, please try again later!
-    InvalidApiKey:
-      type: object
-      properties:
-        errors:
-          type: string
-          description: Automation with the given API key does not exist
-          example: We are unable to find automation with the given API key
   securitySchemes:
     Token:
       type: http
